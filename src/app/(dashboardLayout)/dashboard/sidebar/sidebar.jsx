@@ -11,7 +11,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-64 min-h-screen bg-white border-r shadow-md p-5 space-y-6">
+    <div className="w-64 min-h-screen bg-white border-r shadow-md p-5 space-y-6 fixed top-0 left-0">
       {/* Logo */}
       <Link href={"/"}>
         <h2 className="text-2xl font-bold text-pink-500">🎂 Cake Dashboard</h2>
