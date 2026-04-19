@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-export function PromoBanner() {
+export default function PromoBanner() {
   return (
     <section className="py-6 px-6">
       <div className="bg-gradient-to-r from-pink-500 to-rose-400 text-white rounded-2xl p-10 text-center space-y-4 shadow-lg">
