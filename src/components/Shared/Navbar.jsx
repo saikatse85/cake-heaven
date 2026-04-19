@@ -26,8 +26,12 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-pink-600">
-          CakeShop 🍰
+        <Link
+          href="/"
+          className="text-2xl flex items-center font-bold text-pink-600"
+        >
+          Cake Heaven
+          <img src="/asset/img/logo.png" className="h-12 w-12" alt="logo" />
         </Link>
 
         {/* Desktop Menu */}
@@ -39,10 +43,10 @@ export default function Navbar() {
 
           {!isLoggedIn ? (
             <div className="flex gap-2">
-              <Button onClick={() => setIsLoggedIn(true)} variant="outline">
-                Login
-              </Button>
-              <Button>Register</Button>
+              {/* ✅ Login now redirects */}
+              <Link href="/login">
+                <Button variant="outline">Login</Button>
+              </Link>
             </div>
           ) : (
             <DropdownMenu>
@@ -98,10 +102,10 @@ export default function Navbar() {
 
           {!isLoggedIn ? (
             <>
-              <Button onClick={() => setIsLoggedIn(true)} variant="outline">
-                Login
-              </Button>
-              <Button>Register</Button>
+              {/* ✅ Login redirect */}
+              <Link href="/login">
+                <Button variant="outline">Login</Button>
+              </Link>
             </>
           ) : (
             <>

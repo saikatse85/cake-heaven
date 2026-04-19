@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "name": "Chocolate Fudge Cake",
+    "category": "Chocolate",
+    "price": 25,
+    "rating": 4.8,
+    "description": "The Chocolate Fudge Cake is a luxurious dessert crafted for true chocolate lovers. It features multiple layers of soft, moist chocolate sponge that are carefully baked to achieve a rich and tender texture. Each layer is generously coated with thick, silky fudge frosting made from premium cocoa and real chocolate, giving it a deep and intense flavor profile. The cake is designed to melt in your mouth, offering a perfect balance between sweetness and bitterness of cocoa. The outer layer is smoothly finished with a glossy fudge ganache that enhances both appearance and taste. Inside, the layers are slightly soaked with chocolate syrup to ensure every bite remains moist and flavorful. This cake is ideal for birthdays, celebrations, or any special occasion where indulgence is required. The aroma of freshly baked cocoa fills the room, making it irresistible even before the first bite. It pairs perfectly with coffee or milk and is often topped with chocolate shavings or curls for extra texture. Whether served chilled or at room temperature, the Chocolate Fudge Cake delivers a consistent and unforgettable dessert experience that leaves chocolate lovers craving more.",
+    "image": "https://i.ibb.co.com/Vp3SC8qq/Chocolate-Fudge-Cake.avif",
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Vanilla Cream Cake",
+    "category": "Vanilla",
+    "price": 20,
+    "rating": 4.5,
+    "description": "The Vanilla Cream Cake is a classic and elegant dessert that highlights the simplicity and beauty of pure vanilla flavor. It is made using soft, fluffy vanilla sponge layers that are baked to perfection, ensuring a light and airy texture in every bite. Between each layer, fresh whipped cream is generously spread, giving the cake a smooth and creamy consistency. The vanilla essence used in the recipe is high-quality, offering a rich aroma that enhances the overall taste experience. The cake is lightly sweetened to maintain balance, making it suitable for all age groups. Its exterior is beautifully decorated with swirls of whipped cream and sometimes topped with fresh fruits or white chocolate shavings. This cake is perfect for birthdays, tea-time snacks, or formal gatherings where a light dessert is preferred. The Vanilla Cream Cake is not overly heavy, making it easy to enjoy multiple slices without feeling overwhelmed. It also serves as a perfect base for customization, such as adding fruit fillings or flavored syrups. Every bite delivers a soft, creamy, and comforting experience that reflects timeless baking tradition and simplicity.",
+    "image": "https://i.ibb.co.com/QtjrMQ2/Vanilla-Cream-Cake.jpg",
+    "available": true
+  },
+  {
+    "id": 3,
+    "name": "Red Velvet Cake",
+    "category": "Velvet",
+    "price": 28,
+    "rating": 4.9,
+    "description": "The Red Velvet Cake is a visually stunning and delicious dessert known for its deep red color and smooth texture. It consists of soft, velvety sponge layers that are slightly chocolate-flavored with a hint of cocoa. The cake is paired with rich cream cheese frosting, which adds a tangy contrast to the sweetness of the sponge. Each bite delivers a perfect balance of flavors, combining sweetness, mild cocoa bitterness, and creamy richness. The texture is extremely soft and moist, making it melt effortlessly in the mouth. The signature red color makes it a popular choice for romantic occasions, weddings, and celebrations. The frosting is applied generously between layers and on the outer surface, giving it a luxurious appearance. Often decorated with red velvet crumbs or decorative frosting patterns, it stands out as a premium dessert. The Red Velvet Cake is not just about taste but also about presentation, making it a centerpiece for any dessert table. It pairs well with coffee or milk and is loved for its smooth, elegant, and indulgent experience.",
+    "image": "https://i.ibb.co.com/8Dh5YLrv/Red-Velvet-Cake.jpg",
+    "available": true
+  },
+  {
+    "id": 4,
+    "name": "Strawberry Cheesecake",
+    "category": "Cheesecake",
+    "price": 30,
+    "rating": 4.7,
+    "description": "The Strawberry Cheesecake is a creamy and refreshing dessert that combines smooth cheese filling with the sweetness of fresh strawberries. It features a crunchy biscuit base made from crushed graham crackers mixed with butter, providing a firm foundation. The middle layer consists of rich cream cheese blended with sugar, eggs, and vanilla, baked to a silky and smooth consistency. On top, a glossy strawberry glaze made from real strawberries is added, giving it a fruity and slightly tangy flavor. Fresh strawberry slices are often used for decoration, enhancing both taste and appearance. This cheesecake is chilled before serving, allowing the layers to set perfectly and deliver a firm yet creamy texture. It is a popular dessert for summer gatherings, birthdays, and special celebrations. The balance between sweetness and tanginess makes it refreshing and not overly heavy. Every bite offers a combination of crunchy base, creamy filling, and fruity topping that creates a delightful experience. It is both elegant and satisfying, making it a favorite among cheesecake lovers.",
+    "image": "https://i.ibb.co.com/mC2dfY56/Strawberry-Cheesecake.jpg",
+    "available": true
+  },
+  {
+    "id": 5,
+    "name": "Black Forest Cake",
+    "category": "Chocolate",
+    "price": 27,
+    "rating": 4.6,
+    "description": "The Black Forest Cake is a traditional and widely loved dessert that combines chocolate sponge, whipped cream, and cherries. It features multiple layers of light chocolate sponge cake that are soaked in cherry syrup to enhance moisture and flavor. Between each layer, fresh whipped cream and juicy cherries are added, creating a perfect mix of sweetness and fruitiness. The outer layer is coated with whipped cream and decorated with chocolate shavings and cherries on top. This cake is known for its balanced taste, where chocolate richness meets the refreshing tartness of cherries. It is commonly served at birthdays, weddings, and festive occasions. The texture is soft, moist, and creamy, making it easy to enjoy. The combination of flavors creates a nostalgic dessert experience that has been popular for decades. Its visual appeal, with white cream and red cherries, makes it attractive for celebrations. The Black Forest Cake remains a timeless favorite for people who enjoy both chocolate and fruit-based desserts.",
+    "image": "https://i.ibb.co.com/ymPkn2g2/Black-Forest-Cake.jpg",
+    "available": true
+  },
+  {
+    "id": 6,
+    "name": "Blueberry Cheesecake",
+    "category": "Cheesecake",
+    "price": 32,
+    "rating": 4.8,
+    "description": "The Blueberry Cheesecake is a rich and creamy dessert topped with a vibrant blueberry glaze. It starts with a buttery biscuit crust that provides a crunchy base. The filling is made from smooth cream cheese, sugar, and eggs, baked to a silky consistency. Once cooled, it is topped with a thick blueberry sauce made from fresh blueberries, sugar, and lemon juice. The topping adds a sweet and slightly tangy flavor that perfectly complements the creamy base. This cheesecake is chilled for several hours before serving, allowing all layers to set beautifully. It is often decorated with fresh blueberries for extra flavor and visual appeal. The combination of creamy texture and fruity topping makes it refreshing and satisfying. It is perfect for parties, family gatherings, and special celebrations. The Blueberry Cheesecake is known for its elegant look and rich taste, making it a premium dessert option for cheesecake lovers.",
+    "image": "https://i.ibb.co.com/xtrR47qk/Blueberry-Cheesecake.jpg",
+    "available": true
+  },
+  {
+    "id": 7,
+    "name": "Mango Delight Cake",
+    "category": "Fruit",
+    "price": 22,
+    "rating": 4.4,
+    "description": "The Mango Delight Cake is a tropical dessert that highlights the natural sweetness of ripe mangoes. It features soft vanilla sponge layers filled with mango-flavored cream and fresh mango puree. The cake is light, fluffy, and refreshing, making it perfect for summer seasons. Each layer is infused with mango syrup, enhancing the fruity aroma and taste. The outer layer is decorated with whipped cream and mango slices, giving it a bright and appealing look. This cake is not overly sweet, allowing the natural fruit flavor to stand out. It is often served chilled, making it even more refreshing. The combination of soft sponge, creamy filling, and juicy mango creates a delightful texture experience. It is ideal for birthdays, summer parties, and family gatherings. The Mango Delight Cake offers a perfect balance between sweetness and freshness, making it a favorite for fruit dessert lovers.",
+    "image": "https://i.ibb.co.com/20DfB8r8/Mango-Delight-Cake.jpg",
+    "available": true
+  },
+  {
+    "id": 8,
+    "name": "Coffee Mocha Cake",
+    "category": "Coffee",
+    "price": 26,
+    "rating": 4.6,
+    "description": "The Coffee Mocha Cake is a rich and aromatic dessert designed for coffee enthusiasts. It combines layers of soft chocolate sponge infused with strong coffee flavor. Between each layer, mocha cream made from coffee and chocolate is generously spread, creating a deep and bold taste profile. The cake has a perfect balance of sweetness and bitterness, making it unique among desserts. The outer layer is decorated with mocha frosting and sometimes topped with cocoa powder or chocolate drizzle. The aroma of coffee enhances the overall experience, making it irresistible for coffee lovers. It is perfect for evening desserts, celebrations, or coffee breaks. The texture is soft, moist, and creamy, ensuring every bite is flavorful. This cake pairs exceptionally well with espresso or cappuccino, making it a café-style dessert experience at home.",
+    "image": "https://i.ibb.co.com/gZ59Z6F5/Coffee-Mocha-Cake.jpg",
+    "available": true
+  },
+  {
+    "id": 9,
+    "name": "Rainbow Birthday Cake",
+    "category": "Birthday",
+    "price": 35,
+    "rating": 4.9,
+    "description": "The Rainbow Birthday Cake is a colorful and joyful dessert designed to make celebrations special. It features multiple layers of brightly colored sponge cake stacked together to create a rainbow effect when sliced. Each layer is soft, fluffy, and lightly sweetened to maintain balance. Between the layers, vanilla whipped cream is spread generously to add smoothness and flavor. The outer layer is decorated with vibrant frosting, sprinkles, and sometimes candies, making it visually exciting. This cake is especially popular for children’s birthdays and festive celebrations. It is not only visually appealing but also delicious and fun to eat. The combination of colors and flavors creates a festive mood, making it the centerpiece of any party. Every slice reveals a surprise of colors, adding excitement to the celebration. The Rainbow Birthday Cake represents happiness, creativity, and joy.",
+    "image": "https://i.ibb.co.com/N6mZwHx9/Rainbow-Birthday-Cake.webp",
+    "available": true
+  },
+  {
+    "id": 10,
+    "name": "Lemon Drizzle Cake",
+    "category": "Citrus",
+    "price": 18,
+    "rating": 4.3,
+    "description": "The Lemon Drizzle Cake is a refreshing citrus-based dessert with a soft and moist texture. It is made using fresh lemon juice and zest, which gives it a tangy and aromatic flavor. The sponge is light and fluffy, soaked with lemon syrup that keeps it moist and flavorful. On top, a sweet and tangy lemon glaze is drizzled, creating a glossy finish. The balance between sweet and sour makes it unique and refreshing. This cake is perfect for tea-time, light desserts, or summer gatherings. It is not heavy, making it easy to enjoy without feeling overly full. The aroma of fresh lemon enhances the eating experience, making it refreshing and uplifting. It is often garnished with lemon slices or icing sugar for decoration. The Lemon Drizzle Cake is simple yet elegant, offering a perfect citrus treat.",
+    "image": "https://i.ibb.co.com/RTLVJf67/Lemon-Drizzle-Cake.webp",
+    "available": true
+  }
+]
