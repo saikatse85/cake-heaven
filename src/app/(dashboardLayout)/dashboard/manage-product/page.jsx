@@ -54,14 +54,17 @@ export default function ManageItems() {
               {/* Actions */}
               <div className="flex gap-2 pt-2">
                 <Link href={`/items/${cake.id}`} className="w-full">
-                  <Button variant="outline" className="w-full">
+                  <Button
+                    variant="outline"
+                    className="w-full border-pink-400 hover:bg-pink-400"
+                  >
                     View
                   </Button>
                 </Link>
 
                 <Button
                   variant="destructive"
-                  className="w-full bg-pink-500 hover:bg-pink-600"
+                  className="w-1/2 bg-pink-500 hover:bg-pink-600 text-white"
                   onClick={() => handleDelete(cake.id)}
                 >
                   Delete
