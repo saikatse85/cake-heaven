@@ -1,20 +1,76 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // 🔐 Register with Email
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match");
+    }
+
+    try {
+      setLoading(true);
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+
+      // ✅ Set display name
+      await updateProfile(userCredential.user, {
+        displayName: name,
+      });
+
+      router.push("/"); // redirect after register
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔥 Google Register
+  const handleGoogleRegister = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      await signInWithPopup(auth, provider);
+      router.push("/");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100">
-      {/* Background glow */}
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-pink-300 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-72 h-72 bg-rose-300 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Card */}
       <Card className="relative w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
           {/* Header */}
@@ -27,18 +83,45 @@ export default function RegisterPage() {
             </p>
           </div>
 
+          {/* ❌ Error message */}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
           {/* Form */}
-          <form className="space-y-4">
-            <Input type="text" placeholder="Full Name" required />
+          <form onSubmit={handleRegister} className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Full Name"
+              required
+              onChange={(e) => setName(e.target.value)}
+            />
 
-            <Input type="email" placeholder="Email address" required />
+            <Input
+              type="email"
+              placeholder="Email address"
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-            <Input type="password" placeholder="Password" required />
+            <Input
+              type="password"
+              placeholder="Password"
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-            <Input type="password" placeholder="Confirm Password" required />
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              required
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
 
-            <Button className="w-full bg-pink-500 hover:bg-pink-600">
-              Register
+            <Button
+              type="submit"
+              className="w-full bg-pink-500 hover:bg-pink-600"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Register"}
             </Button>
           </form>
 
@@ -51,9 +134,14 @@ export default function RegisterPage() {
 
           {/* Social Register */}
           <div className="flex gap-3">
-            <Button variant="outline" className="w-full">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleRegister}
+            >
               Google
             </Button>
+
             <Button variant="outline" className="w-full">
               Facebook
             </Button>

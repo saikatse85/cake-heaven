@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import {
   DropdownMenu,
@@ -13,13 +13,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
+  // 🔥 Listen to Firebase auth state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // 🔓 Logout
+  const handleLogout = async () => {
+    await signOut(auth);
   };
 
   return (
@@ -41,26 +53,24 @@ export default function Navbar() {
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
 
-          {!isLoggedIn ? (
-            <div className="flex gap-2">
-              {/* ✅ Login now redirects */}
-              <Link href="/login">
-                <Button variant="outline">Login</Button>
-              </Link>
-            </div>
-          ) : (
+          {/* 🔐 If user logged in */}
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">{user.name}</Button>
+                <Button variant="outline">{user.displayName || "User"}</Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>
-                  <p className="font-medium">{user.name}</p>
+                  <p className="font-medium">{user.displayName || "No Name"}</p>
                   <p className="text-sm text-gray-500">{user.email}</p>
                 </DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
+
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/add-product">Add Product</Link>
@@ -72,11 +82,16 @@ export default function Navbar() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+                <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          ) : (
+            // ❌ Not logged in
+            <Link href="/login">
+              <Button variant="outline">Login</Button>
+            </Link>
           )}
         </div>
 
@@ -100,28 +115,22 @@ export default function Navbar() {
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
 
-          {!isLoggedIn ? (
+          {user ? (
             <>
-              {/* ✅ Login redirect */}
-              <Link href="/login">
-                <Button variant="outline">Login</Button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <p className="font-medium">{user.name}</p>
+              <p className="font-medium">{user.displayName || "No Name"}</p>
               <p className="text-sm text-gray-500">{user.email}</p>
 
               <Link href="/dashboard/add-product">Add Product</Link>
               <Link href="/dashboard/manage-products">Manage Products</Link>
 
-              <Button
-                onClick={() => setIsLoggedIn(false)}
-                variant="destructive"
-              >
+              <Button onClick={handleLogout} variant="destructive">
                 Logout
               </Button>
             </>
+          ) : (
+            <Link href="/login">
+              <Button variant="outline">Login</Button>
+            </Link>
           )}
         </div>
       )}

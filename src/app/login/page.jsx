@@ -1,19 +1,57 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // 🔐 Email/Password Login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/dashboard"); // redirect after login
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔥 Google Login
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      await signInWithPopup(auth, provider);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100">
-      {/* Background glow */}
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-pink-300 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-72 h-72 bg-rose-300 rounded-full blur-3xl"></div>
-      </div>
-
       {/* Card */}
       <Card className="relative w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
@@ -27,11 +65,24 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Form */}
-          <form className="space-y-4">
-            <Input type="email" placeholder="Email address" required />
+          {/* ❌ Error message */}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-            <Input type="password" placeholder="Password" required />
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Email address"
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <Input
+              type="password"
+              placeholder="Password"
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
             <div className="flex justify-between text-sm">
               <label className="flex items-center gap-2">
@@ -47,8 +98,12 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <Button className="w-full bg-pink-500 hover:bg-pink-600">
-              Login
+            <Button
+              type="submit"
+              className="w-full bg-pink-500 hover:bg-pink-600"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
 
@@ -61,9 +116,14 @@ export default function LoginPage() {
 
           {/* Social login */}
           <div className="flex gap-3">
-            <Button variant="outline" className="w-full">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleLogin}
+            >
               Google
             </Button>
+
             <Button variant="outline" className="w-full">
               Facebook
             </Button>
