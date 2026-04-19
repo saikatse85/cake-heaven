@@ -1,7 +1,7 @@
 import React from "react";
 import Hero from "./Hero/page";
 import Container from "@/components/Shared/Container";
-import { PromoBanner } from "./PromoBanner/page";
+import { PromoBanner } from "./promo-banner/page";
 import { FeaturedCakes } from "@/components/Shared/FeaturedCakes";
 import { Features } from "@/components/Shared/Features";
 import { Reviews } from "./Reviews/page";
