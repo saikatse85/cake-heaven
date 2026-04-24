@@ -6,7 +6,7 @@ const reviews = [
   { name: "Nadia", text: "Perfect for my birthday party!" },
 ];
 
-export function Reviews() {
+export default function Reviews() {
   return (
     <section className="py-16 px-6">
       <h2 className="text-3xl font-bold text-center mb-10">Happy Customers</h2>
