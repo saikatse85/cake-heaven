@@ -3,9 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
 export default async function CakeDetails({ params }) {
-  const res = await fetch("http://localhost:3000/data/cakes.json", {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/data/cakes.json`,
+    { cache: "no-store" },
+  );
 
   const cakes = await res.json();
 
