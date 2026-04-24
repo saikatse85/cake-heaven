@@ -19,12 +19,30 @@ import NavItem from "./NavItem";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // 🔥 Listen to Firebase auth state
+  // 🔥 Get user + role
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser) {
+        try {
+          const res = await fetch(`/api/users/${currentUser.uid}`);
+
+          if (!res.ok) {
+            throw new Error("Failed to fetch role");
+          }
+
+          const data = await res.json();
+          setRole(data.role); // ✅ correct role
+        } catch (error) {
+          console.log("Role fetch error:", error);
+        }
+      } else {
+        setRole(null);
+      }
     });
 
     return () => unsubscribe();
@@ -54,7 +72,6 @@ export default function Navbar() {
           <NavItem href="/about">About</NavItem>
           <NavItem href="/contact">Contact</NavItem>
 
-          {/* 🔐 If user logged in */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -62,24 +79,63 @@ export default function Navbar() {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="w-56">
+                {/* USER INFO */}
                 <DropdownMenuLabel>
                   <p className="font-medium">{user.displayName || "No Name"}</p>
                   <p className="text-sm text-gray-500">{user.email}</p>
+
+                  {/* ✅ FIXED ROLE */}
+                  <p className="text-xs text-pink-600 font-semibold mt-1">
+                    Role: {role || "loading..."}
+                  </p>
                 </DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
 
+                {/* COMMON */}
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/add-product">Add Product</Link>
-                </DropdownMenuItem>
+                {/* 🔥 ADMIN MENU */}
+                {role === "admin" && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/add-product">Add Product</Link>
+                    </DropdownMenuItem>
 
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/manage-products">Manage Products</Link>
-                </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/manage-products">
+                        Manage Products
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/orders">All Orders</Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/users">User Management</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                {/* 👤 CLIENT MENU */}
+                {role === "client" && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/cakes">All Cakes</Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/my-orders">My Orders</Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/reviews">Reviews</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
 
                 <DropdownMenuSeparator />
 
@@ -89,7 +145,6 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            // ❌ Not logged in
             <Link href="/login">
               <Button variant="outline">Login</Button>
             </Link>
@@ -120,9 +175,24 @@ export default function Navbar() {
             <>
               <p className="font-medium">{user.displayName || "No Name"}</p>
               <p className="text-sm text-gray-500">{user.email}</p>
+              <p className="text-xs text-pink-600">
+                Role: {role || "loading..."}
+              </p>
 
-              <Link href="/dashboard/add-product">Add Product</Link>
-              <Link href="/dashboard/manage-products">Manage Products</Link>
+              {/* Role-based mobile menu */}
+              {role === "admin" && (
+                <>
+                  <Link href="/dashboard/add-product">Add Product</Link>
+                  <Link href="/dashboard/manage-products">Manage Products</Link>
+                </>
+              )}
+
+              {role === "client" && (
+                <>
+                  <Link href="/dashboard/cakes">All Cakes</Link>
+                  <Link href="/dashboard/my-orders">My Orders</Link>
+                </>
+              )}
 
               <Button onClick={handleLogout} variant="destructive">
                 Logout
