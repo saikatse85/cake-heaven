@@ -43,10 +43,24 @@ export default function RegisterPage() {
         email,
         password,
       );
-
+      const user = userCredential.user;
       // ✅ Set display name
-      await updateProfile(userCredential.user, {
+      await updateProfile(user, {
         displayName: name,
+      });
+
+      // ✅ Save user to MongoDB
+      await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          uid: user.uid,
+          role: "client",
+        }),
       });
 
       router.push("/"); // redirect after register
