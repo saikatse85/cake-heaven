@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import NavItem from "./NavItem";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
@@ -48,10 +49,10 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/">Home</Link>
-          <Link href="/cakes">Cakes</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
+          <NavItem href="/">Home</NavItem>
+          <NavItem href="/cakes">Cakes</NavItem>
+          <NavItem href="/about">About</NavItem>
+          <NavItem href="/contact">Contact</NavItem>
 
           {/* 🔐 If user logged in */}
           {user ? (
@@ -110,10 +111,10 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-3">
-          <Link href="/">Home</Link>
-          <Link href="/cakes">Cakes</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
+          <NavItem href="/">Home</NavItem>
+          <NavItem href="/cakes">Cakes</NavItem>
+          <NavItem href="/about">About</NavItem>
+          <NavItem href="/contact">Contact</NavItem>
 
           {user ? (
             <>
