@@ -3,7 +3,7 @@ import Hero from "./Hero/page";
 import Container from "@/components/Shared/Container";
 import { FeaturedCakes } from "@/components/Shared/FeaturedCakes";
 import { Features } from "@/components/Shared/Features";
-import { Reviews } from "./Reviews/page";
+import Reviews from "./Reviews/page";
 import PromoBanner from "./promo-banner/page";
 
 const page = () => {
