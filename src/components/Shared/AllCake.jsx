@@ -8,7 +8,7 @@ export function AllCakes() {
   const [cakes, setCakes] = useState([]);
 
   useEffect(() => {
-    fetch("/data/cakes.json")
+    fetch("/api/cakes")
       .then((res) => res.json())
       .then((data) => setCakes(data));
   }, []);
@@ -19,9 +19,9 @@ export function AllCakes() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {cakes?.map((cake, i) => (
+        {cakes?.map((cake) => (
           <Card
-            key={i}
+            key={cake._id}
             className="hover:shadow-xl transition rounded-2xl overflow-hidden"
           >
             <img

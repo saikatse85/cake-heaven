@@ -8,7 +8,7 @@ export function FeaturedCakes() {
   const [cakes, setCakes] = useState([]);
 
   useEffect(() => {
-    fetch("/data/cakes.json")
+    fetch("/api/cakes")
       .then((res) => res.json())
       .then((data) => setCakes(data));
   }, []);

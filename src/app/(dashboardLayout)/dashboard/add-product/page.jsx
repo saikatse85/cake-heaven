@@ -8,64 +8,76 @@ import { Button } from "@/components/ui/button";
 
 export default function AddCakePage() {
   const [formData, setFormData] = useState({
-    title: "",
-    shortDesc: "",
-    fullDesc: "",
+    name: "",
+    category: "",
     price: "",
+    rating: "",
+    description: "",
     image: "",
+    available: true,
   });
 
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Cake Data:", formData);
+    const newCake = {
+      ...formData,
+      price: Number(formData.price),
+      rating: Number(formData.rating),
+    };
 
-    // 👉 later you can send to database (Firebase / MongoDB)
+    try {
+      const res = await fetch("/api/cakes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCake),
+      });
 
-    setMessage("Cake added successfully 🎉");
+      const data = await res.json();
 
-    setFormData({
-      title: "",
-      shortDesc: "",
-      fullDesc: "",
-      price: "",
-      image: "",
-    });
+      if (res.ok) {
+        setMessage("Cake added successfully 🎉");
+        setFormData({
+          name: "",
+          category: "",
+          price: "",
+          rating: "",
+          description: "",
+          image: "",
+          available: true,
+        });
+      } else {
+        setMessage(data.error || "Something went wrong");
+      }
+    } catch (error) {
+      setMessage("Error adding cake");
+    }
   };
 
   return (
     <ProtectedRoute>
       <div className="max-w-xl mx-auto py-10 space-y-6">
-        <h1 className="text-2xl font-bold">Add Item</h1>
+        <h1 className="text-2xl font-bold">Add Cake</h1>
 
         {message && <p className="text-green-500 text-sm">{message}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            placeholder="Title"
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
+            placeholder="Cake Name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
 
           <Input
-            placeholder="Short Description"
-            value={formData.shortDesc}
+            placeholder="Category (e.g. Birthday)"
+            value={formData.category}
             onChange={(e) =>
-              setFormData({ ...formData, shortDesc: e.target.value })
-            }
-            required
-          />
-
-          <Textarea
-            placeholder="Full Description"
-            value={formData.fullDesc}
-            onChange={(e) =>
-              setFormData({ ...formData, fullDesc: e.target.value })
+              setFormData({ ...formData, category: e.target.value })
             }
             required
           />
@@ -81,7 +93,27 @@ export default function AddCakePage() {
           />
 
           <Input
-            placeholder="Image URL (optional)"
+            type="number"
+            step="0.1"
+            placeholder="Rating (e.g. 4.5)"
+            value={formData.rating}
+            onChange={(e) =>
+              setFormData({ ...formData, rating: e.target.value })
+            }
+            required
+          />
+
+          <Textarea
+            placeholder="Description"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            required
+          />
+
+          <Input
+            placeholder="Image URL"
             value={formData.image}
             onChange={(e) =>
               setFormData({ ...formData, image: e.target.value })
@@ -92,7 +124,7 @@ export default function AddCakePage() {
             type="submit"
             className="w-full bg-pink-500 hover:bg-pink-600"
           >
-            Submit
+            Add Cake
           </Button>
         </form>
       </div>
