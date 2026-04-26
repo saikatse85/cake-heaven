@@ -5,13 +5,15 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db("cake-heaven");
 
-    const orders = await db
-      .collection("orders")
-      .find({})
-      .sort({ createdAt: -1 })
-      .toArray();
+    const orders = await db.collection("orders").find({}).toArray();
+return Response.json(orders);
+    // const orders = await db
+    //   .collection("orders")
+    //   .find({})
+    //   .sort({ createdAt: -1 })
+    //   .toArray();
 
-    return Response.json(orders);
+    // return Response.json(orders);
   } catch (error) {
     console.log("🔴 ADMIN API ERROR:", error);
 

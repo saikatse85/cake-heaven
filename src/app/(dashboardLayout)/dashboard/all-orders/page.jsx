@@ -38,9 +38,12 @@ export default function AllOrders() {
         <table className="min-w-full border border-gray-300">
           <thead className="bg-gray-100">
             <tr>
+              <th className="border p-2">Name</th>
+              <th className="border p-2">Phone</th>
               <th className="border p-2">User Email</th>
               <th className="border p-2">Cake Name</th>
               <th className="border p-2">Price ($)</th>
+
               <th className="border p-2">Status</th>
               <th className="border p-2">Date</th>
               <th className="border p-2">Update</th>
@@ -51,6 +54,8 @@ export default function AllOrders() {
             {orders.length > 0 ? (
               orders.map((order) => (
                 <tr key={order._id} className="text-center">
+                  <td className="border p-2">{order.userName}</td>
+                  <td className="border p-2">{order.phone}</td>
                   <td className="border p-2">{order.userEmail}</td>
                   <td className="border p-2">{order.cakeName}</td>
                   <td className="border p-2">{order.price}</td>

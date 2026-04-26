@@ -7,7 +7,16 @@ export async function POST(req) {
     const client = await clientPromise;
     const db = client.db("cake-heaven");
 
-    const result = await db.collection("orders").insertOne(body);
+    const result = await db.collection("orders").insertOne({
+      userEmail: body.userEmail,
+      userName: body.userName,     
+      phone: body.phone,           
+      cakeId: body.cakeId,
+      cakeName: body.cakeName,
+      price: body.price,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    });
 
     return Response.json({
       message: "Order created",
@@ -55,3 +64,4 @@ export async function GET(req) {
     );
   }
 }
+

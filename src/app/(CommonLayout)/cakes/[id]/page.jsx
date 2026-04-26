@@ -30,6 +30,20 @@ export default async function CakeDetails({ params }) {
     );
   }
 
+  const relatedRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cakes`,
+    {
+      cache: "no-store",
+    },
+  );
+
+  const allCakes = await relatedRes.json();
+
+  // filter related
+  const relatedCakes = allCakes
+    .filter((item) => item.category === cake.category && item._id !== cake._id)
+    .slice(0, 4);
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 space-y-8">
       {/* Back Button */}
@@ -39,7 +53,6 @@ export default async function CakeDetails({ params }) {
 
       {/* Main Section */}
       <div className="grid md:grid-cols-2 gap-8 items-start">
-        {/* Image */}
         <Card className="overflow-hidden rounded-2xl">
           <img
             src={cake.image}
@@ -48,10 +61,8 @@ export default async function CakeDetails({ params }) {
           />
         </Card>
 
-        {/* Info */}
         <div className="space-y-4">
           <h1 className="text-3xl font-bold">{cake.name}</h1>
-
           <p className="text-gray-600">{cake.description}</p>
 
           <p className="text-pink-500 text-2xl font-bold">
@@ -67,7 +78,6 @@ export default async function CakeDetails({ params }) {
             </span>
           </div>
 
-          {/* Order Now Button */}
           <OrderButton cakeId={cake._id} />
         </div>
       </div>
@@ -83,6 +93,39 @@ export default async function CakeDetails({ params }) {
           </ul>
         </CardContent>
       </Card>
+
+      {/* ✅ Related Products (FIXED POSITION) */}
+      {relatedCakes.length > 0 && (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Related Cakes 🎂</h2>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {relatedCakes.map((item) => (
+              <Card
+                key={item._id}
+                className="overflow-hidden rounded-xl hover:shadow-lg transition"
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-40 object-cover"
+                />
+
+                <CardContent className="p-4 space-y-2">
+                  <h3 className="font-semibold text-lg">{item.name}</h3>
+                  <p className="text-pink-500 font-bold">${item.price}</p>
+
+                  <Link href={`/cakes/${item._id}`}>
+                    <Button size="sm" className="w-full">
+                      View Details
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

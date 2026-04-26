@@ -13,6 +13,9 @@ export default function OrderPage() {
   const [user, setUser] = useState(null);
   const [cake, setCake] = useState(null);
 
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -29,8 +32,21 @@ export default function OrderPage() {
   }, [id]);
 
   const createOrder = async () => {
+    if (!name || !phone) {
+      alert("Please enter name and phone number");
+      return;
+    }
+
+    if (phone.length < 11) {
+      alert("Invalid phone number");
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem("user"));
     const orderData = {
       userEmail: user.email,
+      userName: name,
+      phone: phone,
       cakeId: cake._id,
       cakeName: cake.name,
       price: cake.price,
@@ -55,18 +71,66 @@ export default function OrderPage() {
   if (!cake) return <p>Loading...</p>;
 
   return (
-    <div className="max-w-xl mx-auto py-10 space-y-4">
-      <h1 className="text-2xl font-bold">Confirm Order</h1>
+    <div className="max-w-xl mx-auto py-12 px-6">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 space-y-7 border">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Confirm Your Order 🎂
+          </h1>
+          <p className="text-gray-500 text-sm">
+            Please review your order before placing it
+          </p>
+        </div>
 
-      <h2 className="text-lg">{cake.name}</h2>
-      <p className="text-pink-500">${cake.price}</p>
+        {/* Cake Info */}
+        <div className="bg-pink-50 rounded-xl p-5 border flex justify-between items-center">
+          <h2 className="text-lg font-semibold text-gray-800">{cake.name}</h2>
+          <p className="text-pink-600 text-2xl font-bold">${cake.price}</p>
+        </div>
 
-      <Button
-        onClick={createOrder}
-        className="bg-pink-500 hover:bg-pink-600 w-full"
-      >
-        Confirm Order
-      </Button>
+        {/* Info Box */}
+        <div className="bg-gray-50 border rounded-xl p-4 text-sm text-gray-600">
+          <p className="font-medium mb-2">📦 Order Details:</p>
+          <ul className="space-y-1 list-disc ml-5">
+            <li>Customer Name</li>
+            <li>Mobile Number</li>
+            <li>Email Address</li>
+          </ul>
+        </div>
+
+        {/* Inputs */}
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Enter your full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-pink-400 transition"
+          />
+
+          <input
+            type="text"
+            placeholder="Enter mobile number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-pink-400 transition"
+          />
+        </div>
+
+        {/* Button */}
+        <button
+          onClick={createOrder}
+          className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition"
+        >
+          Confirm Order 🚀
+        </button>
+
+        {/* Footer */}
+        <p className="text-xs text-center text-gray-400">
+          By confirming, you agree to our terms & delivery policy.
+        </p>
+      </div>
     </div>
   );
 }

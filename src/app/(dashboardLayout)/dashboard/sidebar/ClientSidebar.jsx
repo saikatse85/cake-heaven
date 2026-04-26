@@ -8,7 +8,7 @@ export default function ClientSidebar() {
   const router = useRouter();
 
   const menuItems = [
-    { name: "🍰 All Cakes", href: "/dashboard/cakes" },
+    { name: "🍰 All Cakes", href: "/dashboard/all-cakes" },
     { name: "📦 My Orders", href: "/dashboard/my-orders" },
     { name: "💳 Checkout", href: "/dashboard/checkout" },
     { name: "⭐ Reviews", href: "/dashboard/reviews" },
