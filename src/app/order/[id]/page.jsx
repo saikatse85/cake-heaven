@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { Button } from "@/components/ui/button";
 
 export default function OrderPage() {
   const { id } = useParams();
@@ -15,6 +14,8 @@ export default function OrderPage() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -43,6 +44,11 @@ export default function OrderPage() {
     }
 
     const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
+      return;
+    }
     const orderData = {
       userEmail: user.email,
       userName: name,
@@ -64,7 +70,7 @@ export default function OrderPage() {
 
     if (res.ok) {
       alert("Order placed successfully 🎉");
-      router.push("/dashboard");
+      router.push("/my-orders");
     }
   };
 

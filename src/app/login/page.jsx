@@ -48,9 +48,8 @@ export default function LoginPage() {
           uid: user.uid,
         }),
       );
-      console.log(user);
 
-      router.push("/dashboard");
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,7 +74,7 @@ export default function LoginPage() {
         }),
       );
 
-      router.push("/dashboard");
+      router.push(decodeURIComponent(redirect));
     } catch (err) {
       setError(err.message);
     }
