@@ -39,8 +39,10 @@ export function AllCakes() {
 
               <p className="text-pink-500 font-bold">$ {cake?.price} Only</p>
 
-              <Link href={`/cakes/${cake.id}`}>
-                <Button className="w-full mt-2">View Details</Button>
+              <Link href={`/cakes/${cake._id}`}>
+                <Button className="w-full bg-pink-500 mt-2">
+                  View Details
+                </Button>
               </Link>
             </CardContent>
           </Card>

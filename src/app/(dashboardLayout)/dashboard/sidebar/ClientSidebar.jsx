@@ -9,7 +9,7 @@ export default function ClientSidebar() {
 
   const menuItems = [
     { name: "🍰 All Cakes", href: "/dashboard/cakes" },
-    { name: "📦 My Orders", href: "/dashboard/orders" },
+    { name: "📦 My Orders", href: "/dashboard/my-orders" },
     { name: "💳 Checkout", href: "/dashboard/checkout" },
     { name: "⭐ Reviews", href: "/dashboard/reviews" },
     { name: "👤 Profile", href: "/dashboard/profile" },

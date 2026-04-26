@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -22,6 +22,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const searchParams = useSearchParams();
+
+  const redirect = searchParams.get("redirect") || "/";
+
   // 🔐 Email/Password Login
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,6 +34,9 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      const redirect = new URLSearchParams(window.location.search).get(
+        "redirect",
+      );
       router.push("/dashboard"); // redirect after login
     } catch (err) {
       setError(err.message);
@@ -44,6 +51,10 @@ export default function LoginPage() {
 
     try {
       await signInWithPopup(auth, provider);
+
+      const redirect = new URLSearchParams(window.location.search).get(
+        "redirect",
+      );
       router.push("/dashboard");
     } catch (err) {
       setError(err.message);

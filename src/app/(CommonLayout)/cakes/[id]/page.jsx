@@ -1,28 +1,35 @@
+import OrderButton from "@/components/Shared/OrderButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
 export default async function CakeDetails({ params }) {
+  const { id } = await params;
+
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/data/cakes.json`,
-    { cache: "no-store" },
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cakes/${id}`,
+    {
+      cache: "no-store",
+    },
   );
 
-  const cakes = await res.json();
+  if (!res.ok) {
+    throw new Error("Failed to fetch cake");
+  }
 
-  const { id } = await params;
-  const cake = cakes.find((c) => c.id === Number(id));
+  const cake = await res.json();
 
   if (!cake) {
     return (
       <div className="p-10 text-center">
-        <h2 className="text-xl font-bold">Cakes not found</h2>
+        <h2 className="text-xl font-bold">Cake not found</h2>
         <Link href="/cakes">
           <Button className="mt-4">Back to Cakes</Button>
         </Link>
       </div>
     );
   }
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 space-y-8">
       {/* Back Button */}
@@ -56,18 +63,12 @@ export default async function CakeDetails({ params }) {
               {cake.category}
             </span>
             <span className="px-3 py-1 bg-gray-100 rounded-full">
-              {cake.date}
+              {cake.createdAt}
             </span>
           </div>
+
           {/* Order Now Button */}
-          <Link href="/">
-            <Button
-              size="lg"
-              className="bg-pink-500 hover:bg-pink-600 text-white px-8"
-            >
-              Order Now
-            </Button>
-          </Link>
+          <OrderButton cakeId={cake._id} />
         </div>
       </div>
 
@@ -82,35 +83,6 @@ export default async function CakeDetails({ params }) {
           </ul>
         </CardContent>
       </Card>
-
-      {/* Related Items */}
-      <div>
-        <h2 className="text-xl font-bold mb-4">Related Cakes</h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {cakes
-            .filter((i) => i.id !== cake.id)
-            .map((rel) => (
-              <Card key={rel.id} className="hover:shadow-lg transition">
-                <CardContent className="p-4 space-y-2">
-                  <img
-                    src={rel.image}
-                    className="h-32 w-full object-cover rounded-lg"
-                    alt={rel.name}
-                  />
-
-                  <h3 className="font-semibold">{rel.name}</h3>
-
-                  <p className="text-pink-500 font-bold">$ {rel.price}</p>
-
-                  <Link href={`/cakes/${rel.id}`}>
-                    <Button className="w-full">View</Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-        </div>
-      </div>
     </div>
   );
 }

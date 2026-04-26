@@ -40,8 +40,10 @@ export function FeaturedCakes() {
 
               <p className="text-pink-500 font-bold">$ {cake?.price} Only</p>
 
-              <Link href={`/cakes/${cake.id}`}>
-                <Button className="w-full mt-2">View Details</Button>
+              <Link href={`/cakes/${cake._id}`}>
+                <Button className="w-full bg-pink-500 hover:bg-pink-600 cursor-pointer mt-2">
+                  View Details
+                </Button>
               </Link>
             </CardContent>
           </Card>

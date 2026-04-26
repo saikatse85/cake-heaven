@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function PromoBanner() {
   return (
@@ -12,9 +13,11 @@ export default function PromoBanner() {
           Celebrate your moments with delicious handmade cakes.
         </p>
 
-        <Button className="bg-white text-pink-600 hover:bg-gray-100">
-          Order Now
-        </Button>
+        <Link href={"/cakes"}>
+          <Button className="bg-white text-pink-600 hover:bg-gray-100">
+            Order Now
+          </Button>
+        </Link>
       </div>
     </section>
   );

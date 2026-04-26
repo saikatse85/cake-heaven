@@ -3,6 +3,7 @@
 import Container from "@/components/Shared/Container";
 import { Button } from "@/components/ui/button";
 import { Cake } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -35,12 +36,14 @@ export default function Hero() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Button
-                size="lg"
-                className="bg-pink-500 hover:bg-pink-600 text-white px-8"
-              >
-                Order Now
-              </Button>
+              <Link href={"/cakes"}>
+                <Button
+                  size="lg"
+                  className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+                >
+                  Order Now
+                </Button>
+              </Link>
 
               <Button size="lg" variant="outline">
                 View Menu
