@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
-import NavItem from "./NavItem";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -33,11 +33,28 @@ export default function Footer() {
           {/* Links */}
           <div>
             <h3 className="font-semibold mb-3">Quick Links</h3>
-            <div className="flex flex-col space-y-2 text-sm text-gray-600 w-12">
-              <NavItem href="/">Home</NavItem>
-              <NavItem href="/cakes">Cakes</NavItem>
-              <NavItem href="/about">About</NavItem>
-              <NavItem href="/contact">Contact</NavItem>
+            <div className="flex flex-col space-y-2 text-sm text-gray-600">
+              <Link className="hover:text-pink-500 hover:font-bold" href="/">
+                Home
+              </Link>
+              <Link
+                className="hover:text-pink-500 hover:font-bold"
+                href="/cakes"
+              >
+                Cakes
+              </Link>
+              <Link
+                className="hover:text-pink-500 hover:font-bold"
+                href="/about"
+              >
+                About
+              </Link>
+              <Link
+                className="hover:text-pink-500 hover:font-bold"
+                href="/contact"
+              >
+                Contact
+              </Link>
             </div>
           </div>
 

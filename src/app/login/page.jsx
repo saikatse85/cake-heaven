@@ -33,11 +33,24 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      const redirect = new URLSearchParams(window.location.search).get(
-        "redirect",
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
       );
-      router.push("/dashboard"); // redirect after login
+
+      const user = userCredential.user;
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: user.email,
+          uid: user.uid,
+        }),
+      );
+      console.log(user);
+
+      router.push("/dashboard");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -45,16 +58,23 @@ export default function LoginPage() {
     }
   };
 
-  // 🔥 Google Login
+  // Google Login
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
 
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
 
-      const redirect = new URLSearchParams(window.location.search).get(
-        "redirect",
+      const user = result.user;
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: user.email,
+          uid: user.uid,
+        }),
       );
+
       router.push("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -63,10 +83,8 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100">
-      {/* Card */}
       <Card className="relative w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
-          {/* Header */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-gray-900">
               Welcome Back 🎂
@@ -76,10 +94,8 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* ❌ Error message */}
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
               type="email"
@@ -95,20 +111,6 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <div className="flex justify-between text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-pink-500" />
-                Remember me
-              </label>
-
-              <Link
-                href="/forgot-password"
-                className="text-pink-500 hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
             <Button
               type="submit"
               className="w-full bg-pink-500 hover:bg-pink-600"
@@ -118,14 +120,6 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-2 text-gray-400 text-sm">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            OR
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
-
-          {/* Social login */}
           <div className="flex gap-3">
             <Button
               variant="outline"
@@ -139,18 +133,16 @@ export default function LoginPage() {
               Facebook
             </Button>
           </div>
-
-          {/* Footer */}
-          <p className="text-center text-sm text-gray-500">
-            Don’t have an account?{" "}
-            <Link
-              href="/register"
-              className="text-pink-500 font-medium hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
         </CardContent>
+        <div className="text-center text-sm text-gray-500">
+          Don’t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-pink-500 hover:underline font-medium"
+          >
+            Sign up
+          </Link>
+        </div>
       </Card>
     </div>
   );

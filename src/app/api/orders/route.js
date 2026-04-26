@@ -22,15 +22,36 @@ export async function POST(req) {
 }
 
 
-export async function GET() {
-  const client = await clientPromise;
-  const db = client.db("cake-heaven");
 
-  const orders = await db
-    .collection("orders")
-    .find({})
-    .sort({ createdAt: -1 })
-    .toArray();
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get("email");
 
-  return Response.json(orders);
+    const client = await clientPromise;
+    const db = client.db("cake-heaven");
+
+    if (!email) {
+      return Response.json([]); 
+    }
+
+    const query = {
+      userEmail: email.trim(),
+    };
+
+    const orders = await db
+      .collection("orders")
+      .find(query)
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    return Response.json(orders);
+  } catch (error) {
+    console.log("🔴 API ERROR:", error);
+
+    return Response.json(
+      { error: "Failed to fetch orders" },
+      { status: 500 }
+    );
+  }
 }

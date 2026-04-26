@@ -84,7 +84,10 @@ export default function AdminSidebar() {
 
           {openMenu === "order" && (
             <div className="ml-4 space-y-1 mt-2">
-              <Link href="/admin/orders" className="block hover:text-pink-600">
+              <Link
+                href="/dashboard/all-orders"
+                className="block hover:text-pink-600"
+              >
                 📋 View All Orders
               </Link>
               <Link
