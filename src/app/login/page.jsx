@@ -41,6 +41,18 @@ export default function LoginPage() {
 
       const user = userCredential.user;
 
+      // ✅ Check user in MongoDB
+      const res = await fetch(`/api/users/${user.uid}`);
+      const data = await res.json();
+
+      if (!data || !data.email) {
+        // ❌ Not registered in your DB
+        await auth.signOut();
+        setError("You are not registered. Please sign up first.");
+        return;
+      }
+
+      // ✅ Only valid users continue
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -49,13 +61,48 @@ export default function LoginPage() {
         }),
       );
 
-      router.push("/dashboard");
+      router.push(decodeURIComponent(redirect));
     } catch (err) {
-      setError(err.message);
+      if (err.code === "auth/user-not-found") {
+        setError("No account found. Please register first.");
+      } else if (err.code === "auth/wrong-password") {
+        setError("Incorrect password.");
+      } else {
+        setError("Login failed. Try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+
+  //   try {
+  //     const userCredential = await signInWithEmailAndPassword(
+  //       auth,
+  //       email,
+  //       password,
+  //     );
+
+  //     const user = userCredential.user;
+
+  //     localStorage.setItem(
+  //       "user",
+  //       JSON.stringify({
+  //         email: user.email,
+  //         uid: user.uid,
+  //       }),
+  //     );
+
+  //     router.push("/dashboard");
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Google Login
   const handleGoogleLogin = async () => {
@@ -63,8 +110,20 @@ export default function LoginPage() {
 
     try {
       const result = await signInWithPopup(auth, provider);
-
       const user = result.user;
+
+      // ✅ Save to MongoDB if not exists
+      await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: user.displayName,
+          email: user.email,
+          uid: user.uid,
+        }),
+      });
 
       localStorage.setItem(
         "user",
@@ -76,9 +135,30 @@ export default function LoginPage() {
 
       router.push(decodeURIComponent(redirect));
     } catch (err) {
-      setError(err.message);
+      setError("Google login failed.");
     }
   };
+  // const handleGoogleLogin = async () => {
+  //   const provider = new GoogleAuthProvider();
+
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+
+  //     const user = result.user;
+
+  //     localStorage.setItem(
+  //       "user",
+  //       JSON.stringify({
+  //         email: user.email,
+  //         uid: user.uid,
+  //       }),
+  //     );
+
+  //     router.push(decodeURIComponent(redirect));
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  // };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100">

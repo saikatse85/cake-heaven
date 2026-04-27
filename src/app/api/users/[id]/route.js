@@ -8,9 +8,8 @@ export async function GET(req, { params }) {
     const db = client.db("cake-heaven");
 
     const user = await db.collection("users").findOne({ uid: id });
-    return Response.json({
-      role: user?.role || "client",
-    });
+
+    return Response.json(user || {});
   } catch (error) {
     return Response.json(
       { error: "Server error" },

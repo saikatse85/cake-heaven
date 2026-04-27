@@ -76,7 +76,23 @@ export default function RegisterPage() {
     const provider = new GoogleAuthProvider();
 
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // ✅ Save user to MongoDB (if not exists)
+      await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: user.displayName || "",
+          email: user.email,
+          uid: user.uid,
+          role: "client",
+        }),
+      });
+
       router.push("/");
     } catch (err) {
       setError(err.message);

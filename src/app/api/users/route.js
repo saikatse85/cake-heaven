@@ -5,25 +5,31 @@ export async function POST(req) {
     const body = await req.json();
 
     const client = await clientPromise;
-    const db = client.db("cake-heaven"); // database name
+    const db = client.db("cake-heaven");
 
-    const usersCollection = db.collection("users");
+    const users = db.collection("users");
 
-    const result = await usersCollection.insertOne({
-      name: body.name,
+    // check if already exists
+    const existingUser = await users.findOne({ uid: body.uid });
+
+    if (existingUser) {
+      return Response.json(existingUser);
+    }
+
+    const newUser = {
+      name: body.name || "",
       email: body.email,
       uid: body.uid,
-      role: body.role || "client",
+      role: "client",
       createdAt: new Date(),
-    });
+    };
 
-    return Response.json({
-      success: true,
-      insertedId: result.insertedId,
-    });
+    await users.insertOne(newUser);
+
+    return Response.json(newUser);
   } catch (error) {
     return Response.json(
-      { success: false, message: error.message },
+      { error: "Failed to create user" },
       { status: 500 }
     );
   }
