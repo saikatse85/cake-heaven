@@ -11,7 +11,7 @@ export default function NavItem({ href, children }) {
   return (
     <Link href={href} className="relative">
       <span
-        className={isActive ? "text-pink-600 font-semibold" : "text-gray-700"}
+        className={isActive ? "text-pink-600 font-semibold" : "dark:text-white"}
       >
         {children}
       </span>

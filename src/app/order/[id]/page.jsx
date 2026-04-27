@@ -117,7 +117,7 @@ export default function OrderPage() {
 
           <input
             type="text"
-            placeholder="Enter mobile number"
+            placeholder="01xxxxxxxxx"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-pink-400 transition"

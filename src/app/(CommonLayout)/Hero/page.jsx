@@ -7,13 +7,13 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <div className="w-full bg-gradient-to-br from-pink-50 via-white to-rose-100 ">
+    <div className="w-full bg-gradient-to-br from-pink-50 via-white to-rose-100 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900">
       <Container>
         <section className="relative flex items-center justify-center py-4 overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-10 left-10 w-72 h-72 bg-pink-300 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-72 h-72 bg-rose-300 rounded-full blur-3xl"></div>
+            <div className="absolute top-10 left-10 w-72 h-72 bg-pink-300 dark:bg-pink-800 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-72 h-72 bg-rose-300 dark:bg-rose-800 rounded-full blur-3xl"></div>
           </div>
 
           {/* Content */}
@@ -23,13 +23,13 @@ export default function Hero() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
               Freshly Baked <span className="text-pink-500">Cakes</span> for
               Every Moment
             </h1>
 
             {/* Subtitle */}
-            <p className="text-gray-600 text-lg md:text-xl">
+            <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl">
               Delicious custom cakes made with love. Perfect for birthdays,
               weddings, and special celebrations.
             </p>
@@ -45,7 +45,11 @@ export default function Hero() {
                 </Button>
               </Link>
 
-              <Button size="lg" variant="outline">
+              <Button
+                size="lg"
+                variant="outline"
+                className="dark:text-white dark:border-zinc-600"
+              >
                 View Menu
               </Button>
             </div>
