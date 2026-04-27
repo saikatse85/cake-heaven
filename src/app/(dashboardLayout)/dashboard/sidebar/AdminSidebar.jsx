@@ -90,15 +90,6 @@ export default function AdminSidebar() {
               >
                 📋 View All Orders
               </Link>
-              <Link
-                href="/admin/orders/status"
-                className="block hover:text-pink-600"
-              >
-                🔄 Change Order Status
-              </Link>
-              <p className="text-xs text-gray-400">
-                Pending → Processing → Delivered → Cancelled
-              </p>
             </div>
           )}
         </div>
@@ -114,7 +105,10 @@ export default function AdminSidebar() {
 
           {openMenu === "user" && (
             <div className="ml-4 space-y-1 mt-2">
-              <Link href="/admin/users" className="block hover:text-pink-600">
+              <Link
+                href="/dashboard/users"
+                className="block hover:text-pink-600"
+              >
                 👤 View All Users
               </Link>
               <Link

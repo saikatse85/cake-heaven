@@ -26,7 +26,7 @@ export default function LoginPage() {
 
   const redirect = searchParams.get("redirect") || "/";
 
-  // 🔐 Email/Password Login
+  //  Email/Password Login
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);

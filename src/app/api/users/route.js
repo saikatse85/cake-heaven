@@ -28,3 +28,22 @@ export async function POST(req) {
     );
   }
 }
+
+//All user get
+
+export async function GET() {
+  try {
+    const client = await clientPromise;
+    const db = client.db("cake-heaven");
+
+    const users = await db
+      .collection("users")
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    return Response.json(users);
+  } catch (error) {
+    return Response.json({ error: "Failed to fetch users" }, { status: 500 });
+  }
+}
