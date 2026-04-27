@@ -1,7 +1,7 @@
 import AllUsers from "@/components/Shared/AllUsers";
 
 async function getUsers() {
-  const res = await fetch("http://localhost:3000/api/users", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`, {
     cache: "no-store",
   });
 
