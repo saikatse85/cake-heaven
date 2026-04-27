@@ -70,7 +70,7 @@ export default function OrderPage() {
 
     if (res.ok) {
       alert("Order placed successfully 🎉");
-      router.push("/my-orders");
+      router.push("/dashboard/my-orders");
     }
   };
 
