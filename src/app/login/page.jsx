@@ -49,7 +49,7 @@ export default function LoginPage() {
         }),
       );
 
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
     } catch (err) {
       setError(err.message);
     } finally {
