@@ -30,6 +30,7 @@ export default function AllUsers({ users }) {
       transition={{ duration: 0.4 }}
       className="p-6"
     >
+      <h1 className="text-3xl font-bold mb-5">All User 👤</h1>
       <div className="overflow-x-auto rounded-2xl shadow-lg">
         <table ref={tableRef} className="min-w-full bg-white text-sm text-left">
           <thead className="bg-pink-500 text-gray-700 uppercase text-xs">
