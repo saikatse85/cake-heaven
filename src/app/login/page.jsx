@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Swal from "sweetalert2";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -59,48 +60,39 @@ export default function LoginPage() {
         }),
       );
 
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful!",
+        text: "Welcome back 🎂",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       router.push(decodeURIComponent(redirect));
     } catch (err) {
       if (err.code === "auth/user-not-found") {
-        setError("No account found. Please register first.");
+        Swal.fire({
+          icon: "error",
+          title: "User Not Found",
+          text: "No account found. Please register first.",
+        });
       } else if (err.code === "auth/wrong-password") {
-        setError("Incorrect password.");
+        Swal.fire({
+          icon: "error",
+          title: "Wrong Password",
+          text: "Incorrect password.",
+        });
       } else {
-        setError("Login failed. Try again.");
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: "Something went wrong. Try again.",
+        });
       }
     } finally {
       setLoading(false);
     }
   };
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError("");
-
-  //   try {
-  //     const userCredential = await signInWithEmailAndPassword(
-  //       auth,
-  //       email,
-  //       password,
-  //     );
-
-  //     const user = userCredential.user;
-
-  //     localStorage.setItem(
-  //       "user",
-  //       JSON.stringify({
-  //         email: user.email,
-  //         uid: user.uid,
-  //       }),
-  //     );
-
-  //     router.push("/dashboard");
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   // Google Login
   const handleGoogleLogin = async () => {
@@ -131,32 +123,19 @@ export default function LoginPage() {
         }),
       );
 
+      Swal.fire({
+        icon: "success",
+        title: "Welcome!",
+        text: "Google login successful 🎉",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       router.push(decodeURIComponent(redirect));
     } catch (err) {
       setError("Google login failed.");
     }
   };
-  // const handleGoogleLogin = async () => {
-  //   const provider = new GoogleAuthProvider();
-
-  //   try {
-  //     const result = await signInWithPopup(auth, provider);
-
-  //     const user = result.user;
-
-  //     localStorage.setItem(
-  //       "user",
-  //       JSON.stringify({
-  //         email: user.email,
-  //         uid: user.uid,
-  //       }),
-  //     );
-
-  //     router.push(decodeURIComponent(redirect));
-  //   } catch (err) {
-  //     setError(err.message);
-  //   }
-  // };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100 dark:from-pink-950 dark:via-black dark:to-rose-950">

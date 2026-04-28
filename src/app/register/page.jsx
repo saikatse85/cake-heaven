@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
@@ -63,6 +64,14 @@ export default function RegisterPage() {
         }),
       });
 
+      Swal.fire({
+        icon: "success",
+        title: "Welcome!",
+        text: "Google account registered successfully 🎉",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       router.push("/"); // redirect after register
     } catch (err) {
       setError(err.message);
@@ -91,6 +100,14 @@ export default function RegisterPage() {
           uid: user.uid,
           role: "client",
         }),
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Account Created!",
+        text: "Your account has been created successfully 🎉",
+        timer: 2000,
+        showConfirmButton: false,
       });
 
       router.push("/");

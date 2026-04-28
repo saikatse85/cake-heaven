@@ -1,5 +1,6 @@
 import clientPromise from "@/lib/mongodb";
 
+
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -7,24 +8,43 @@ export async function POST(req) {
     const client = await clientPromise;
     const db = client.db("cake-heaven");
 
-    const result = await db.collection("orders").insertOne({
+    const order = {
       userEmail: body.userEmail,
-      userName: body.userName,     
-      phone: body.phone,           
+      userName: body.userName,
+      phone: body.phone,
+
       cakeId: body.cakeId,
       cakeName: body.cakeName,
+      image: body.image,
+
+      size: body.size,
+      flavor: body.flavor,
+      message: body.message,
+      address: body.address,
+
+      quantity: body.quantity,
       price: body.price,
-      status: "pending",
+      totalPrice: body.totalPrice,
+
+      deliveryDate: body.deliveryDate,
+
+      status: body.status || "pending",
       createdAt: new Date().toISOString(),
-    });
+    };
+
+    const result = await db.collection("orders").insertOne(order);
 
     return Response.json({
-      message: "Order created",
+      message: "Order created successfully 🎉",
       insertedId: result.insertedId,
+      order,
     });
   } catch (error) {
     return Response.json(
-      { error: "Failed to create order" },
+      {
+        error: "Failed to create order",
+        details: error.message,
+      },
       { status: 500 }
     );
   }

@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ConfirmOrderButton from "@/components/Shared/ConfirmOrderButton";
+import { motion } from "framer-motion";
+import gsap from "gsap";
+import Swal from "sweetalert2";
+import Loading from "@/app/loading";
 
 export default function OrderPage() {
   const { id } = useParams();
@@ -14,129 +19,232 @@ export default function OrderPage() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+
+  const [size, setSize] = useState("Small");
+  const [flavor, setFlavor] = useState("Chocolate");
+  const [message, setMessage] = useState("");
+  const [address, setAddress] = useState("");
+  const [qty, setQty] = useState(1);
+  const [date, setDate] = useState("");
+
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-    });
+  const cardRef = useRef(null);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsubscribe();
   }, []);
 
-  // fetch cake
   useEffect(() => {
     fetch(`/api/cakes/${id}`)
       .then((res) => res.json())
       .then((data) => setCake(data));
   }, [id]);
 
+  useEffect(() => {
+    if (cardRef.current) {
+      gsap.fromTo(
+        cardRef.current,
+        { opacity: 0, y: 40, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" },
+      );
+    }
+  }, [cake]);
+
+  const totalPrice = cake ? cake.price * qty : 0;
+
   const createOrder = async () => {
-    if (!name || !phone) {
-      alert("Please enter name and phone number");
+    if (!name || !phone || !date) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields",
+        text: "Please fill all required fields",
+        confirmButtonColor: "#ec4899",
+      });
       return;
     }
 
-    if (phone.length < 11) {
-      alert("Invalid phone number");
+    if (!/^\d{11,}$/.test(phone)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid Phone Number",
+        text: "Phone number must be at least 11 digits",
+        confirmButtonColor: "#ec4899",
+      });
       return;
     }
 
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
+      Swal.fire({
+        icon: "info",
+        title: "Login Required",
+        text: "You need to login first",
+        confirmButtonColor: "#ec4899",
+      });
       router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
       return;
     }
+
     const orderData = {
       userEmail: user.email,
       userName: name,
-      phone: phone,
+      phone,
       cakeId: cake._id,
       cakeName: cake.name,
+      image: cake.image,
+      size,
+      flavor,
+      message,
+      address,
+      quantity: qty,
       price: cake.price,
+      totalPrice,
+      deliveryDate: date,
       status: "pending",
       createdAt: new Date(),
     };
 
     const res = await fetch("/api/orders", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData),
     });
 
     if (res.ok) {
-      alert("Order placed successfully 🎉");
+      Swal.fire({
+        icon: "success",
+        title: "Order Placed successfully 🎉",
+        text: "Your cake order has been successfully placed!",
+        confirmButtonColor: "#ec4899",
+      });
       router.push("/dashboard/my-orders");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: "Something went wrong. Try again!",
+      });
     }
   };
 
-  if (!cake) return <p>Loading...</p>;
+  if (!cake)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-black dark:text-white bg-white dark:bg-zinc-950">
+        <Loading />
+      </div>
+    );
 
   return (
-    <div className="max-w-xl mx-auto py-12 px-6">
-      <div className="bg-white shadow-2xl rounded-2xl p-8 space-y-7 border">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Confirm Your Order 🎂
-          </h1>
-          <p className="text-gray-500 text-sm">
-            Please review your order before placing it
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center px-6 bg-white dark:bg-zinc-950 text-black dark:text-white">
+      <motion.div ref={cardRef} className="w-full max-w-xl">
+        <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 p-8 rounded-2xl space-y-5">
+          {/* 🍰 Cake Image */}
+          <img
+            src={cake.image}
+            className="w-full h-56 object-cover rounded-xl"
+          />
 
-        {/* Cake Info */}
-        <div className="bg-pink-50 rounded-xl p-5 border flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-800">{cake.name}</h2>
-          <p className="text-pink-600 text-2xl font-bold">${cake.price}</p>
-        </div>
+          {/* Name + Price */}
+          <div className="flex justify-between">
+            <h2 className="text-xl font-bold">{cake.name}</h2>
+            <p className="text-pink-500 font-bold">${cake.price}</p>
+          </div>
 
-        {/* Info Box */}
-        <div className="bg-gray-50 border rounded-xl p-4 text-sm text-gray-600">
-          <p className="font-medium mb-2">📦 Order Details:</p>
-          <ul className="space-y-1 list-disc ml-5">
-            <li>Customer Name</li>
-            <li>Mobile Number</li>
-            <li>Email Address</li>
-          </ul>
-        </div>
+          {/* Selects */}
+          <select
+            value={size}
+            onChange={(e) => setSize(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          >
+            <option>Small</option>
+            <option>Medium</option>
+            <option>Large</option>
+          </select>
 
-        {/* Inputs */}
-        <div className="space-y-4">
+          <select
+            value={flavor}
+            onChange={(e) => setFlavor(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          >
+            <option>Chocolate</option>
+            <option>Vanilla</option>
+            <option>Strawberry</option>
+          </select>
+
+          {/* Message */}
+          <textarea
+            placeholder="Custom message on cake"
+            value={message}
+            required
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          />
+          {/* Address */}
+          <textarea
+            placeholder="Customer Address"
+            value={address}
+            required
+            onChange={(e) => setAddress(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          />
+
+          {/* Quantity */}
+          <div className="flex items-center gap-3">
+            <button
+              className="px-3 py-1 border rounded dark:border-zinc-700"
+              onClick={() => setQty(Math.max(1, qty - 1))}
+            >
+              -
+            </button>
+
+            <span>{qty}</span>
+
+            <button
+              className="px-3 py-1 border rounded dark:border-zinc-700"
+              onClick={() => setQty(qty + 1)}
+            >
+              +
+            </button>
+          </div>
+
+          {/* Date */}
           <input
-            type="text"
-            placeholder="Enter your full name"
-            value={name}
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          />
+
+          {/* Contact */}
+          <input
+            placeholder="Name"
+            required
             onChange={(e) => setName(e.target.value)}
-            className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-pink-400 transition"
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
           <input
-            type="text"
-            placeholder="01xxxxxxxxx"
-            value={phone}
+            placeholder="Phone"
+            required
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-pink-400 transition"
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
+
+          {/* 💰 Total */}
+          <div className="text-lg font-bold text-pink-500">
+            Total: ${totalPrice}
+          </div>
+
+          {/* Button */}
+          <ConfirmOrderButton onClick={createOrder}>
+            Confirm Order 🚀
+          </ConfirmOrderButton>
         </div>
-
-        {/* Button */}
-        <button
-          onClick={createOrder}
-          className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition"
-        >
-          Confirm Order 🚀
-        </button>
-
-        {/* Footer */}
-        <p className="text-xs text-center text-gray-400">
-          By confirming, you agree to our terms & delivery policy.
-        </p>
-      </div>
+      </motion.div>
     </div>
   );
 }
