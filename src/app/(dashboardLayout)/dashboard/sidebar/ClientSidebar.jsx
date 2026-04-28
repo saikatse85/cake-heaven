@@ -16,17 +16,15 @@ export default function ClientSidebar() {
   ];
 
   const handleLogout = () => {
-    // remove auth data (example)
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
-    // redirect to login page
     router.push("/");
   };
 
   return (
-    <div className="w-64 h-screen bg-pink-50 text-gray-500 p-5 flex flex-col fixed top-0 left-0">
-      <Link href="/" className="flex items-center justify-center">
+    <div className="w-64 h-screen bg-pink-50 dark:bg-zinc-950 text-gray-500 dark:text-gray-300 p-5 flex flex-col fixed top-0 left-0 border-r dark:border-zinc-800">
+      {/* Logo */}
+      <Link href="/" className="flex items-center justify-center gap-2">
         <Image
           src="/asset/img/logo.png"
           alt="Cake Heaven Logo"
@@ -36,11 +34,14 @@ export default function ClientSidebar() {
         />
         <h2 className="text-xl font-bold text-pink-500">Cake Heaven</h2>
       </Link>
-      <h2 className="block p-2 hover:bg-pink-500 hover:text-white rounded mt-5">
-        📊Client Dashboard
+
+      {/* Title */}
+      <h2 className="block p-2 mt-5 rounded bg-pink-100 dark:bg-zinc-900 text-gray-700 dark:text-gray-300">
+        📊 Client Dashboard
       </h2>
+
       {/* Menu */}
-      <ul className="space-y-4 flex-1">
+      <ul className="space-y-4 flex-1 mt-4">
         {menuItems.map((item, index) => (
           <li key={index}>
             <Link

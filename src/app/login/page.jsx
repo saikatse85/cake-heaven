@@ -41,18 +41,16 @@ export default function LoginPage() {
 
       const user = userCredential.user;
 
-      // ✅ Check user in MongoDB
       const res = await fetch(`/api/users/${user.uid}`);
       const data = await res.json();
 
       if (!data || !data.email) {
-        // ❌ Not registered in your DB
         await auth.signOut();
         setError("You are not registered. Please sign up first.");
         return;
       }
 
-      // ✅ Only valid users continue
+      // Only valid users continue
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -112,7 +110,7 @@ export default function LoginPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // ✅ Save to MongoDB if not exists
+      // Save to MongoDB if not exists
       await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -165,7 +163,7 @@ export default function LoginPage() {
       <Card className="relative w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-pink-500">
               Welcome Back 🎂
             </h1>
             <p className="text-gray-500 text-sm">
@@ -206,10 +204,6 @@ export default function LoginPage() {
               onClick={handleGoogleLogin}
             >
               Google
-            </Button>
-
-            <Button variant="outline" className="w-full">
-              Facebook
             </Button>
           </div>
         </CardContent>

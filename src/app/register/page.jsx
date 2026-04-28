@@ -105,7 +105,7 @@ export default function RegisterPage() {
         <CardContent className="p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-pink-500">
               Create Account 🎂
             </h1>
             <p className="text-gray-500 text-sm">
@@ -170,10 +170,6 @@ export default function RegisterPage() {
               onClick={handleGoogleRegister}
             >
               Google
-            </Button>
-
-            <Button variant="outline" className="w-full">
-              Facebook
             </Button>
           </div>
 
