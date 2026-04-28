@@ -159,7 +159,7 @@ export default function LoginPage() {
   // };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100">
+    <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100 dark:from-pink-950 dark:via-black dark:to-rose-950">
       <Card className="relative w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-2">
