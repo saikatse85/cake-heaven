@@ -33,16 +33,16 @@ export default function ManageProduct() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Title */}
-      <h1 className="text-3xl font-bold text-gray-900">Manage Cakes 🎂</h1>
+      <h1 className="text-3xl font-bold">Manage Cakes 🎂</h1>
 
       {/* Grid */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
         {cakes.map((cake) => (
           <Card
             key={cake._id}
-            className="rounded-2xl overflow-hidden hover:shadow-xl transition"
+            className="rounded-2xl overflow-hidden hover:shadow-xl transition bg-white dark:bg-zinc-900 border dark:border-zinc-800"
           >
             <img
               src={cake.image}
@@ -53,7 +53,7 @@ export default function ManageProduct() {
             <CardContent className="p-4 space-y-2">
               <h3 className="font-semibold text-lg">{cake.name}</h3>
 
-              <p className="text-sm text-gray-500 line-clamp-2">
+              <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                 {cake.description}
               </p>
 
@@ -67,7 +67,7 @@ export default function ManageProduct() {
                 >
                   <Button
                     variant="outline"
-                    className="w-full border-pink-400 hover:bg-pink-400"
+                    className="w-full border-pink-400 text-pink-500 hover:bg-pink-500 hover:text-white dark:border-pink-500 dark:text-pink-400 dark:hover:bg-pink-600"
                   >
                     Edit
                   </Button>

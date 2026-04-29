@@ -21,8 +21,8 @@ export default function AdminSidebar() {
   };
 
   return (
-    <div className="w-64 h-screen bg-pink-50 text-gray-500 p-5 flex flex-col overflow-y-auto fixed top-0 left-0">
-      <Link href="/" className="flex items-center justify-center">
+    <div className="w-64 h-screen bg-pink-50 dark:bg-zinc-950 text-gray-700 dark:text-gray-300 p-5 flex flex-col overflow-y-auto fixed top-0 left-0 border-r border-pink-100 dark:border-zinc-800">
+      <Link href="/" className="flex items-center justify-center gap-2">
         <Image
           src="/asset/img/logo.png"
           alt="Cake Heaven Logo"
@@ -34,38 +34,38 @@ export default function AdminSidebar() {
       </Link>
 
       {/* TOP MENU AREA */}
-      <div className="flex-1 space-y-2">
+      <div className="flex-1 space-y-2 mt-4">
         {/* DASHBOARD */}
-        <h2 className="block p-2 hover:bg-pink-500 hover:text-white rounded mt-5">
-          📊Admin Dashboard
+        <h2 className="block p-2 rounded mt-5 hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition">
+          📊 Admin Dashboard
         </h2>
 
         {/* PRODUCT MANAGEMENT */}
         <div>
           <button
             onClick={() => toggleMenu("product")}
-            className="w-full text-left p-2 hover:bg-pink-600 hover:text-white rounded"
+            className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
           >
             🍰 Product Management
           </button>
 
           {openMenu === "product" && (
-            <div className="ml-4 space-y-1 mt-2">
+            <div className="ml-4 space-y-1 mt-2 text-sm">
               <Link
                 href="/dashboard/add-product"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 ➕ Add New Product
               </Link>
               <Link
                 href="/dashboard/manage-product"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 ✏️ Manage Product
               </Link>
               <Link
                 href="/admin/products"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 📋 View All Products
               </Link>
@@ -77,16 +77,16 @@ export default function AdminSidebar() {
         <div>
           <button
             onClick={() => toggleMenu("order")}
-            className="w-full text-left p-2 hover:bg-pink-600 hover:text-white rounded"
+            className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
           >
             📦 Order Management
           </button>
 
           {openMenu === "order" && (
-            <div className="ml-4 space-y-1 mt-2">
+            <div className="ml-4 space-y-1 mt-2 text-sm">
               <Link
                 href="/dashboard/all-orders"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 📋 View All Orders
               </Link>
@@ -98,28 +98,28 @@ export default function AdminSidebar() {
         <div>
           <button
             onClick={() => toggleMenu("user")}
-            className="w-full text-left p-2 hover:bg-pink-600 hover:text-white rounded"
+            className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
           >
             👥 User Management
           </button>
 
           {openMenu === "user" && (
-            <div className="ml-4 space-y-1 mt-2">
+            <div className="ml-4 space-y-1 mt-2 text-sm">
               <Link
                 href="/dashboard/users"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 👤 View All Users
               </Link>
               <Link
                 href="/admin/users/roles"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 🔑 Assign Role
               </Link>
               <Link
                 href="/admin/users/block"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 🚫 Block/Delete User
               </Link>
@@ -131,25 +131,28 @@ export default function AdminSidebar() {
         <div>
           <button
             onClick={() => toggleMenu("review")}
-            className="w-full text-left p-2 hover:bg-pink-600 hover:text-white rounded"
+            className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
           >
             📝 Review Management
           </button>
 
           {openMenu === "review" && (
-            <div className="ml-4 space-y-1 mt-2">
-              <Link href="/admin/reviews" className="block hover:text-pink-600">
+            <div className="ml-4 space-y-1 mt-2 text-sm">
+              <Link
+                href="/admin/reviews"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
+              >
                 ⭐ View Reviews
               </Link>
               <Link
                 href="/admin/reviews/approve"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 ✅ Approve/Delete Reviews
               </Link>
               <Link
                 href="/admin/reviews/spam"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 🚨 Spam Detection
               </Link>
@@ -161,28 +164,28 @@ export default function AdminSidebar() {
         <div>
           <button
             onClick={() => toggleMenu("category")}
-            className="w-full text-left p-2 hover:bg-pink-600 hover:text-white rounded"
+            className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
           >
             📁 Category Management
           </button>
 
           {openMenu === "category" && (
-            <div className="ml-4 space-y-1 mt-2">
+            <div className="ml-4 space-y-1 mt-2 text-sm">
               <Link
                 href="/admin/categories"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 📂 View Categories
               </Link>
               <Link
                 href="/admin/categories/add"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 ➕ Add Category
               </Link>
               <Link
                 href="/admin/categories/edit"
-                className="block hover:text-pink-600"
+                className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 ✏️ Edit/Delete Category
               </Link>
@@ -191,10 +194,10 @@ export default function AdminSidebar() {
         </div>
       </div>
 
-      {/* LOGOUT BUTTON (BOTTOM) */}
+      {/* LOGOUT BUTTON */}
       <button
         onClick={handleLogout}
-        className="mt-6 bg-pink-500 hover:bg-pink-600 text-white py-2 rounded"
+        className="mt-6 bg-pink-500 hover:bg-pink-600 dark:bg-pink-600 dark:hover:bg-pink-700 text-white py-2 rounded transition"
       >
         🚪 Logout
       </button>

@@ -6,7 +6,6 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [userEmail, setUserEmail] = useState("");
 
-  // Load user
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -15,7 +14,6 @@ export default function OrdersPage() {
     }
   }, []);
 
-  // Fetch orders
   useEffect(() => {
     if (!userEmail) return;
 
@@ -31,7 +29,6 @@ export default function OrdersPage() {
     return () => clearInterval(interval);
   }, [userEmail]);
 
-  // Delete
   const handleDelete = async (id) => {
     const confirmDelete = confirm(
       "Are you sure you want to delete this order?",
@@ -48,43 +45,45 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6 p-4 min-h-screen bg-white dark:bg-zinc-950 text-black dark:text-white">
       <h1 className="text-3xl font-bold">My Orders 📦</h1>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
+        <table className="min-w-full border border-gray-300 dark:border-zinc-800 text-sm">
+          {/* HEADER */}
+          <thead className="bg-gray-100 dark:bg-zinc-900">
             <tr>
-              <th className="border p-2">Cake</th>
-              <th className="border p-2">Image</th>
-
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Phone</th>
-              <th className="border p-2">Email</th>
-
-              <th className="border p-2">Size</th>
-              <th className="border p-2">Flavor</th>
-              <th className="border p-2">Message</th>
-              <th className="border p-2">Address</th>
-
-              <th className="border p-2">Qty</th>
-              <th className="border p-2">Price</th>
-              <th className="border p-2">Total</th>
-
-              <th className="border p-2">Delivery</th>
-              <th className="border p-2">Status</th>
-              <th className="border p-2">Action</th>
+              <th className="border p-2 dark:border-zinc-800">Cake</th>
+              <th className="border p-2 dark:border-zinc-800">Image</th>
+              <th className="border p-2 dark:border-zinc-800">Name</th>
+              <th className="border p-2 dark:border-zinc-800">Phone</th>
+              <th className="border p-2 dark:border-zinc-800">Email</th>
+              <th className="border p-2 dark:border-zinc-800">Size</th>
+              <th className="border p-2 dark:border-zinc-800">Flavor</th>
+              <th className="border p-2 dark:border-zinc-800">Message</th>
+              <th className="border p-2 dark:border-zinc-800">Address</th>
+              <th className="border p-2 dark:border-zinc-800">Qty</th>
+              <th className="border p-2 dark:border-zinc-800">Price</th>
+              <th className="border p-2 dark:border-zinc-800">Total</th>
+              <th className="border p-2 dark:border-zinc-800">Delivery</th>
+              <th className="border p-2 dark:border-zinc-800">Status</th>
+              <th className="border p-2 dark:border-zinc-800">Action</th>
             </tr>
           </thead>
 
+          {/* BODY */}
           <tbody>
             {orders.length > 0 ? (
               orders.map((order) => (
-                <tr key={order._id} className="text-center">
-                  <td className="border p-2">{order.cakeName}</td>
+                <tr
+                  key={order._id}
+                  className="text-center hover:bg-gray-50 dark:hover:bg-zinc-900/60"
+                >
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.cakeName}
+                  </td>
 
-                  {/* IMAGE */}
-                  <td className="border p-2">
+                  <td className="border p-2 dark:border-zinc-800">
                     <img
                       src={order.image}
                       alt="cake"
@@ -92,31 +91,48 @@ export default function OrdersPage() {
                     />
                   </td>
 
-                  <td className="border p-2">{order.userName}</td>
-                  <td className="border p-2">{order.phone}</td>
-                  <td className="border p-2">{order.userEmail}</td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.userName}
+                  </td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.phone}
+                  </td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.userEmail}
+                  </td>
 
-                  <td className="border p-2">{order.size}</td>
-                  <td className="border p-2">{order.flavor}</td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.size}
+                  </td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.flavor}
+                  </td>
 
-                  <td className="border p-2 text-xs max-w-[120px]">
+                  <td className="border p-2 text-xs max-w-[120px] dark:border-zinc-800">
                     {order.message}
                   </td>
-                  <td className="border p-2 text-xs max-w-[120px]">
+
+                  <td className="border p-2 text-xs max-w-[120px] dark:border-zinc-800">
                     {order.address}
                   </td>
 
-                  <td className="border p-2">{order.quantity}</td>
-                  <td className="border p-2">${order.price}</td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.quantity}
+                  </td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    ${order.price}
+                  </td>
 
-                  <td className="border p-2 font-bold text-pink-500">
+                  <td className="border p-2 font-bold text-pink-500 dark:border-zinc-800">
                     ${order.totalPrice}
                   </td>
 
-                  <td className="border p-2">{order.deliveryDate}</td>
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.deliveryDate}
+                  </td>
 
                   {/* STATUS */}
-                  <td className="border p-2">
+                  <td className="border p-2 dark:border-zinc-800">
                     <span
                       className={`px-2 py-1 rounded text-white text-xs ${
                         order.status === "pending"
@@ -133,7 +149,7 @@ export default function OrdersPage() {
                   </td>
 
                   {/* ACTION */}
-                  <td className="border p-2">
+                  <td className="border p-2 dark:border-zinc-800">
                     <button
                       onClick={() => handleDelete(order._id)}
                       disabled={order.status !== "pending"}
@@ -150,7 +166,10 @@ export default function OrdersPage() {
               ))
             ) : (
               <tr>
-                <td colSpan="14" className="p-4 text-center">
+                <td
+                  colSpan="14"
+                  className="p-4 text-center text-gray-500 dark:text-gray-400"
+                >
                   No orders found
                 </td>
               </tr>
