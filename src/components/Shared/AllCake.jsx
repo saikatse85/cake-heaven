@@ -16,7 +16,7 @@ export function AllCakes() {
       .then((res) => res.json())
       .then((data) => {
         setCakes(data);
-        setLoading(false); // ✅ FIXED (after data load)
+        setLoading(false);
       });
   }, []);
 
