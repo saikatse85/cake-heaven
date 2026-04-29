@@ -207,7 +207,7 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
         </div>
       )}
 
-      {/* 🔥 REVIEW MODAL */}
+      {/* REVIEW MODAL */}
       <ReviewModal
         isOpen={openReview}
         onClose={() => setOpenReview(false)}

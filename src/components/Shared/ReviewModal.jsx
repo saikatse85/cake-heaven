@@ -12,6 +12,37 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
 
+  // ☁️ CLOUDINARY UPLOAD FUNCTION
+  const handleImageUpload = async (file) => {
+    const reader = new FileReader();
+
+    reader.onloadend = async () => {
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image: reader.result,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          setImage(data.url); // ✅ Cloudinary URL saved
+        } else {
+          Swal.fire("Upload failed", data.error, "error");
+        }
+      } catch (err) {
+        Swal.fire("Error", "Image upload failed", "error");
+      }
+    };
+
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async () => {
     const reviewData = {
       cakeId: cake._id,
@@ -120,7 +151,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
                 ))}
               </div>
 
-              {/* Comment */}
+              {/* Name */}
               <input
                 type="text"
                 placeholder="Your Name"
@@ -128,21 +159,27 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
                 onChange={(e) => setName(e.target.value)}
                 className="w-full p-2 rounded-lg bg-white/40 dark:bg-zinc-800/40 border border-white/30 text-sm"
               />
+
+              {/* ☁️ CLOUDINARY IMAGE UPLOAD */}
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  if (!file) return;
-
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setImage(reader.result); // base64 image
-                  };
-                  reader.readAsDataURL(file);
+                  if (file) handleImageUpload(file);
                 }}
                 className="w-full p-2 rounded-lg bg-white/40 dark:bg-zinc-800/40 border border-white/30 text-sm"
               />
+
+              {/* Preview */}
+              {image && (
+                <img
+                  src={image}
+                  className="w-20 h-20 object-cover rounded-lg border"
+                />
+              )}
+
+              {/* Comment */}
               <textarea
                 placeholder="Tell us what you loved about the cake..."
                 value={comment}
