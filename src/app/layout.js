@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "@/lib/providers";
 import AuthProvider from "@/context/AuthContext";
 import { ThemeProvider } from "@/lib/providers/ThemeProvider";
+import { CartProvider } from "@/context/CartContext";
 
 
 const inter = Inter({
@@ -32,13 +33,15 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} min-h-full flex flex-col antialiased bg-white dark:bg-background text-black dark:text-on-background font-body-md overflow-x-hidden`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <CartProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <AuthProvider>
             <Providers>
               {children}
             </Providers>
           </AuthProvider>
         </ThemeProvider>
+        </CartProvider>
         </body>
     </html>
   );

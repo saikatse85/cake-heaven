@@ -6,10 +6,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AllCakeSkeleton } from "./AllCakeSkeleton";
 import ViewDetailsButton from "./ViewDetailsButton";
+import { useCart } from "@/context/CartContext";
+import AddToCartButton from "./AddToCartButton";
 
 export function AllCakes() {
   const [cakes, setCakes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     fetch("/api/cakes")
@@ -87,7 +90,10 @@ export function AllCakes() {
                   <p className="text-pink-500 font-bold">
                     $ {cake?.price} Only
                   </p>
-
+                  <AddToCartButton
+                    addToCart={addToCart}
+                    cake={cake}
+                  ></AddToCartButton>
                   <Link href={`/cakes/${cake._id}`}>
                     <motion.div whileTap={{ scale: 0.95 }}>
                       <ViewDetailsButton>View Details</ViewDetailsButton>

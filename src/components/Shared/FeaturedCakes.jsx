@@ -7,10 +7,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FeaturedCakesSkeleton } from "./FeaturedCakeSkeleton";
 import ViewDetailsButton from "./ViewDetailsButton";
+import { useCart } from "@/context/CartContext";
+import AddToCartButton from "./AddToCartButton";
 
 export function FeaturedCakes() {
   const [cakes, setCakes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     setLoading(true);
@@ -93,6 +96,11 @@ export function FeaturedCakes() {
                   <p className="text-pink-500 font-bold">
                     $ {cake?.price} Only
                   </p>
+                  {/* ✅ Add to Cart Button */}
+                  <AddToCartButton
+                    addToCart={addToCart}
+                    cake={cake}
+                  ></AddToCartButton>
 
                   <Link href={`/cakes/${cake._id}`}>
                     <motion.div whileTap={{ scale: 0.95 }}>
