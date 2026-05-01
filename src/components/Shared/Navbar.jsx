@@ -27,30 +27,60 @@ export default function Navbar() {
 
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
+  const [dbUser, setDbUser] = useState(null);
+  const [role, setRole] = useState("client");
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // 🛒 CART DROPDOWN STATE
   const [openCart, setOpenCart] = useState(false);
 
   useEffect(() => {
     setMounted(true);
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
+      try {
+        if (!currentUser) {
+          const stored = localStorage.getItem("user");
 
-      if (currentUser) {
-        try {
-          const res = await fetch(`/api/users/${currentUser.uid}`);
-          if (!res.ok) throw new Error("Failed to fetch role");
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setUser(parsed);
+            setDbUser(parsed);
+            setRole(parsed.role || "client");
+          }
 
-          const data = await res.json();
-          setRole(data.role);
-        } catch (error) {
-          console.log("Role fetch error:", error);
+          return;
         }
-      } else {
-        setRole(null);
+
+        const res = await fetch(`/api/users/${currentUser.uid}`);
+        const data = await res.json();
+
+        console.log(data);
+
+        // SAFE CHECK
+        if (res.ok && data && !data.success) {
+          setDbUser(data);
+          setRole(data.role || "client");
+          setUser(currentUser);
+        } else {
+          // fallback to localStorage
+          const stored = localStorage.getItem("user");
+
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setUser(parsed);
+            setDbUser(parsed);
+            setRole(parsed.role || "client");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+
+        const stored = localStorage.getItem("user");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setUser(parsed);
+          setDbUser(parsed);
+          setRole(parsed.role || "client");
+        }
       }
     });
 
@@ -58,8 +88,21 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+
+      localStorage.removeItem("user");
+
+      window.dispatchEvent(new Event("storage"));
+
+      window.location.href = "/login";
+    } catch (error) {
+      console.log("Logout error:", error);
+    }
   };
+
+  const userImage = dbUser?.image || user?.photoURL || null;
+  const userName = dbUser?.name || user?.displayName || "User";
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-950 text-black dark:text-white shadow-md border-b border-zinc-200 dark:border-zinc-800">
@@ -83,7 +126,7 @@ export default function Navbar() {
 
         {/* RIGHT SECTION */}
         <div className="flex items-center justify-center gap-2">
-          {/* 🛒 CART DROPDOWN */}
+          {/* CART */}
           <div className="relative">
             <button onClick={() => setOpenCart(!openCart)} className="relative">
               <span className="text-xl">🛒</span>
@@ -95,7 +138,7 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* GLASS CART DROPDOWN */}
+            {/* 🔥 RESTORED GLASSMORPHISM + ANIMATION */}
             <AnimatePresence>
               {openCart && (
                 <motion.div
@@ -133,9 +176,7 @@ export default function Navbar() {
                           />
 
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-black dark:text-white">
-                              {item.name}
-                            </p>
+                            <p className="text-sm font-medium">{item.name}</p>
                             <p className="text-xs text-gray-600 dark:text-gray-300">
                               ৳{item.price} × {item.quantity}
                             </p>
@@ -145,7 +186,6 @@ export default function Navbar() {
                     </div>
                   )}
 
-                  {/* VIEW CART BUTTON */}
                   <Link href="/cart">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -164,31 +204,65 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          {/* USER SECTION */}
+          {/* USER */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
-                >
-                  {user.displayName || "User"}
-                </Button>
+                <button className="flex items-center gap-2">
+                  {userImage ? (
+                    <img
+                      src={userImage}
+                      className="w-9 h-9 rounded-full object-cover border"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">
+                      {userName.charAt(0)}
+                    </div>
+                  )}
+                </button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-56 bg-white dark:bg-zinc-900 text-black dark:text-white border dark:border-zinc-700">
-                <DropdownMenuLabel>
-                  <p className="font-medium">{user.displayName || "No Name"}</p>
-                  <p className="text-sm text-gray-500">{user.email}</p>
-                  <p className="text-xs text-pink-600 dark:text-pink-400 font-semibold mt-1">
-                    Role: {role || "loading..."}
-                  </p>
+              {/* 🔥 RESTORED GLASSMORPHISM DROPDOWN */}
+              <DropdownMenuContent
+                className="
+                w-56 
+                bg-white/40 dark:bg-zinc-900/40 
+                backdrop-blur-xl 
+                border border-white/30 dark:border-zinc-700/40 
+                shadow-2xl 
+                rounded-2xl
+                text-black dark:text-white
+              "
+              >
+                <DropdownMenuLabel className="flex gap-3 items-center">
+                  {userImage ? (
+                    <img
+                      src={userImage}
+                      className="w-10 h-10 rounded-full object-cover border"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center text-white">
+                      {userName.charAt(0)}
+                    </div>
+                  )}
+
+                  <div>
+                    <p>{userName}</p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-xs text-pink-600">Role: {role}</p>
+                  </div>
                 </DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/all-cakes">AllCakes</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/my-order">My Order</Link>
                 </DropdownMenuItem>
 
                 {role === "admin" && (
@@ -201,30 +275,6 @@ export default function Navbar() {
                       <Link href="/dashboard/manage-products">
                         Manage Products
                       </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin/orders">All Orders</Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin/users">User Management</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-
-                {role === "client" && (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/cakes">All Cakes</Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/my-orders">My Orders</Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/reviews">Reviews</Link>
                     </DropdownMenuItem>
                   </>
                 )}
@@ -242,41 +292,19 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* THEME TOGGLE */}
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="text-zinc-700 dark:text-zinc-200 hover:text-pink-500 transition-colors duration-200"
-            aria-label="Toggle Dark Mode"
-          >
-            <span
-              className={`material-symbols-outlined ${
-                !mounted ? "invisible" : ""
-              }`}
-            >
+          {/* THEME */}
+          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            <span className="material-symbols-outlined">
               {mounted && theme === "dark" ? "light_mode" : "dark_mode"}
             </span>
           </button>
-        </div>
-
-        {/* MOBILE BUTTON */}
-        <div className="md:hidden px-4 pb-4 flex flex-col gap-3 bg-white dark:bg-zinc-950 text-black dark:text-white">
-          <Button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            variant="outline"
-            size="icon"
-          >
-            <Menu />
-          </Button>
         </div>
       </div>
 
       {/* MOBILE MENU */}
       {mobileOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-3">
-          <Link href="/cart" className="flex items-center gap-2">
-            🛒 Cart ({cart.length})
-          </Link>
-
+          <Link href="/cart">🛒 Cart ({cart.length})</Link>
           <NavItem href="/">Home</NavItem>
           <NavItem href="/cakes">Cakes</NavItem>
           <NavItem href="/about">About</NavItem>

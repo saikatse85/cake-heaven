@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
 
-  // 📡 Fetch from MongoDB
+  // Fetch from MongoDB
   useEffect(() => {
     const fetchReviews = async () => {
       try {
