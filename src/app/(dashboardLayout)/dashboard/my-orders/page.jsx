@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -31,17 +32,39 @@ export default function OrdersPage() {
   }, [userEmail]);
 
   const handleDelete = async (id) => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this order?",
-    );
-    if (!confirmDelete) return;
+    const confirmDelete = await Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ec4899",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!confirmDelete.isConfirmed) return;
 
     try {
       await fetch(`/api/orders/${id}`, { method: "DELETE" });
 
       setOrders((prev) => prev.filter((order) => order._id !== id));
+
+      // optional success alert (does not change logic)
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Order has been removed.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (error) {
       console.error("Delete failed:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Delete failed.",
+      });
     }
   };
 

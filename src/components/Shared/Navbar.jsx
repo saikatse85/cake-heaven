@@ -93,6 +93,14 @@ export default function Navbar() {
 
       localStorage.removeItem("user");
 
+      // CLEAR CART
+      const keys = Object.keys(localStorage);
+      keys.forEach((key) => {
+        if (key.startsWith("cart_")) {
+          localStorage.removeItem(key);
+        }
+      });
+
       window.dispatchEvent(new Event("storage"));
 
       window.location.href = "/login";
@@ -100,6 +108,20 @@ export default function Navbar() {
       console.log("Logout error:", error);
     }
   };
+
+  // const handleLogout = async () => {
+  //   try {
+  //     await signOut(auth);
+
+  //     localStorage.removeItem("user");
+
+  //     window.dispatchEvent(new Event("storage"));
+
+  //     window.location.href = "/login";
+  //   } catch (error) {
+  //     console.log("Logout error:", error);
+  //   }
+  // };
 
   const userImage = dbUser?.image || user?.photoURL || null;
   const userName = dbUser?.name || user?.displayName || "User";
