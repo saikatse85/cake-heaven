@@ -6,24 +6,76 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function ContactPage() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    setError("");
+    setSuccess("");
+
+    const { name, email, phone, message } = form;
+
+    // validation
+    if (!name || !email || !phone || !message) {
+      setError("All fields are required");
+      return;
+    }
+
+    // BD phone validation
+    if (!/^01[3-9]\d{8}$/.test(phone)) {
+      setError("Enter valid Bangladeshi phone number");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSuccess("Message sent successfully");
+        setForm({ name: "", email: "", phone: "", message: "" });
+
+        Swal.fire({
+          icon: "success",
+          title: "Sent!",
+          text: "Message sent successfully 🎉",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else {
+        setError(data.error || "Something went wrong");
+        Swal.fire("Error", data.error || "Something went wrong", "error");
+      }
+    } catch (err) {
+      setError("Network error");
+      Swal.fire("Error", "Network error", "error");
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-100 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900 px-6 py-16 text-black dark:text-white">
-      {/* Background glow */}
-      <div className="absolute inset-0 opacity-30 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-10 left-10 w-72 h-72 bg-pink-300 dark:bg-pink-800 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, delay: 2 }}
-          className="absolute bottom-10 right-10 w-72 h-72 bg-rose-300 dark:bg-rose-800 rounded-full blur-3xl"
-        />
-      </div>
-
       <div className="relative max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <motion.div
@@ -32,9 +84,7 @@ export default function ContactPage() {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-            Contact Us 🎂
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold">Contact Us 🎂</h1>
 
           <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
             Have a question or want to order a custom cake? We’d love to hear
@@ -45,92 +95,83 @@ export default function ContactPage() {
         {/* Main Section */}
         <div className="grid md:grid-cols-2 gap-10">
           {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Card className="shadow-xl rounded-2xl bg-white dark:bg-zinc-900 border dark:border-zinc-800">
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-xl font-semibold">Send a Message</h2>
+          <Card className="shadow-xl rounded-2xl bg-white dark:bg-zinc-900 border dark:border-zinc-800">
+            <CardContent className="p-6 space-y-4">
+              <h2 className="text-xl font-semibold">Send a Message</h2>
 
-                <Input
-                  placeholder="Your Name"
-                  className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                />
-                <Input
-                  placeholder="Your Email"
-                  type="email"
-                  className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                />
-                <Textarea
-                  placeholder="Your Message..."
-                  rows={5}
-                  className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {success && <p className="text-green-500 text-sm">{success}</p>}
 
-                <motion.div whileTap={{ scale: 0.95 }}>
-                  <Button className="w-full bg-pink-500 hover:bg-pink-600">
-                    Send Message
-                  </Button>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
+              <Input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Your Name"
+              />
 
-          {/* Contact Info */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ staggerChildren: 0.2 }}
-            className="space-y-6"
-          >
+              <Input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Your Email"
+                type="email"
+              />
+
+              <Input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="📞 Phone : +8801xxxxxxxxx"
+                type="text"
+              />
+
+              <Textarea
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                placeholder="Your Message..."
+                rows={5}
+              />
+
+              <Button
+                onClick={handleSubmit}
+                className="w-full bg-pink-500 hover:bg-pink-600"
+              >
+                Send Message
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Contact Info (UNCHANGED) */}
+          <div className="space-y-6">
             {[
               {
                 title: "📍 Address",
-                text: "123 Sweet Street, Cake City, Bangladesh",
+                text: "Dhumkhatia, Mahigonj, Rangpur, Bangladesh",
               },
-              { title: "📞 Phone", text: "+880 1234-567890" },
-              { title: "✉️ Email", text: "support@cakeheaven.com" },
+              { title: "📞 Phone", text: "+880 1717-973719" },
+              { title: "✉️ Email", text: "saikatse@gmail.com" },
             ].map((item, i) => (
-              <motion.div
+              <Card
                 key={i}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                className="bg-white dark:bg-zinc-900 border dark:border-zinc-800"
               >
-                <Card className="hover:shadow-lg transition rounded-2xl bg-white dark:bg-zinc-900 border dark:border-zinc-800">
-                  <CardContent className="p-6 space-y-2">
-                    <h3 className="font-semibold text-lg">{item.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">
-                      {item.text}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold">{item.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {item.text}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
 
-            {/* Social Icons */}
-            <motion.div
-              className="flex gap-4 pt-2 text-gray-600 dark:text-gray-300"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              {[FaFacebookF, FaInstagram, FaTwitter].map((Icon, i) => (
-                <motion.div
-                  key={i}
-                  whileHover={{ scale: 1.2, color: "#ec4899" }}
-                  whileTap={{ scale: 0.9 }}
-                  className="cursor-pointer"
-                >
-                  <Icon className="w-5 h-5" />
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
+            {/* Social */}
+            <div className="flex gap-4 text-gray-600 dark:text-gray-300">
+              <FaFacebookF className="cursor-pointer" />
+              <FaInstagram className="cursor-pointer" />
+              <FaTwitter className="cursor-pointer" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
