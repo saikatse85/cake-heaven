@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export default function AddCakePage() {
   const [formData, setFormData] = useState({
@@ -96,21 +97,23 @@ export default function AddCakePage() {
     <ProtectedRoute>
       <div
         className="min-h-screen flex items-center justify-center px-4 
-        bg-gradient-to-br from-pink-50 via-white to-rose-100 
-        dark:from-zinc-950 dark:via-zinc-900 dark:to-black"
+        bg-gradient-to-br 
+        from-pink-200/60 via-rose-100/50 to-pink-300/60
+        dark:from-[#1a0f14] dark:via-[#2a121c] dark:to-[#14080d]
+        backdrop-blur-2xl transition-all duration-500"
       >
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-xl space-y-6 p-6 rounded-2xl 
-          bg-white/70 dark:bg-zinc-900/60 
-          backdrop-blur-xl border border-gray-200 dark:border-zinc-800
-          shadow-xl"
+          bg-pink-100/40 dark:bg-pink-500/10 
+          backdrop-blur-2xl 
+          border border-pink-200/40 dark:border-pink-400/10
+          shadow-[0_8px_32px_rgba(255,105,180,0.25)]"
         >
           {/* Title */}
-          <h1
-            className="text-2xl font-bold text-center 
-            text-gray-900 dark:text-white"
-          >
-            Add Cake
+          <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
+            Add Cake 🎂
           </h1>
 
           {message && (
@@ -124,7 +127,7 @@ export default function AddCakePage() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="bg-white dark:bg-zinc-800 dark:text-white"
+              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
               required
             />
 
@@ -134,7 +137,7 @@ export default function AddCakePage() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="bg-white dark:bg-zinc-800 dark:text-white"
+              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
               required
             />
 
@@ -145,7 +148,7 @@ export default function AddCakePage() {
               onChange={(e) =>
                 setFormData({ ...formData, price: e.target.value })
               }
-              className="bg-white dark:bg-zinc-800 dark:text-white"
+              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
               required
             />
 
@@ -157,7 +160,7 @@ export default function AddCakePage() {
               onChange={(e) =>
                 setFormData({ ...formData, rating: e.target.value })
               }
-              className="bg-white dark:bg-zinc-800 dark:text-white"
+              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
               required
             />
 
@@ -167,7 +170,7 @@ export default function AddCakePage() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="bg-white dark:bg-zinc-800 dark:text-white"
+              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
               required
             />
 
@@ -176,7 +179,7 @@ export default function AddCakePage() {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="bg-white dark:bg-zinc-800 dark:text-white"
+              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
             />
 
             {uploading && (
@@ -189,19 +192,19 @@ export default function AddCakePage() {
               <div className="flex justify-center">
                 <img
                   src={formData.image}
-                  className="w-24 h-24 object-cover rounded-lg border dark:border-zinc-700"
+                  className="w-24 h-24 object-cover rounded-lg border dark:border-pink-400/20 shadow-md"
                 />
               </div>
             )}
 
             <Button
               type="submit"
-              className="w-full bg-pink-500 hover:bg-pink-600 text-white"
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white shadow-lg"
             >
               Add Cake
             </Button>
           </form>
-        </div>
+        </motion.div>
       </div>
     </ProtectedRoute>
   );

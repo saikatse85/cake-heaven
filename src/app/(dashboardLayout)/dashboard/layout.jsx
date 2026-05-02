@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }) {
         const data = await res.json();
         const roleFromDB = data?.role?.toLowerCase();
 
-        // ❗ if role missing, don't logout — just fallback
+        // if role missing, don't logout
         if (!roleFromDB) {
           setUserRole("user"); // fallback
           setLoading(false);
@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }) {
 
         const path = window.location.pathname;
 
-        // ✅ redirect
+        //  redirect
         if (path === "/dashboard") {
           if (roleFromDB === "admin") {
             router.replace("/dashboard/admin");
@@ -49,14 +49,14 @@ export default function DashboardLayout({ children }) {
           }
         }
 
-        // 🔐 protect admin
+        // protect admin
         if (roleFromDB !== "admin" && path.startsWith("/dashboard/admin")) {
           router.replace("/dashboard/user");
         }
       } catch (error) {
         console.log("Role fetch error:", error);
 
-        // ❗ DO NOT logout
+        //  DO NOT logout
         setUserRole("user"); // fallback role
         setLoading(false);
       }
@@ -77,7 +77,25 @@ export default function DashboardLayout({ children }) {
     <div className="flex min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-100">
       {userRole === "admin" ? <AdminSidebar /> : <ClientSidebar />}
 
-      <main className="flex-1 p-6 ml-64">{children}</main>
+      <main
+        className="flex-1 ml-64 min-h-screen 
+  bg-gradient-to-br 
+  from-pink-50 via-white to-rose-100 
+  dark:from-[#0f0f11] dark:via-[#111827] dark:to-[#1f2937] 
+  transition-all duration-500 
+  backdrop-blur-sm
+"
+      >
+        <div
+          className="h-full w-full 
+    bg-white/30 dark:bg-white/5 
+    backdrop-blur-xl 
+    border-l border-white/20 dark:border-white/10
+  "
+        >
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

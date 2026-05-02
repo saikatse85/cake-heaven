@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -45,13 +46,37 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 min-h-screen bg-white dark:bg-zinc-950 text-black dark:text-white">
-      <h1 className="text-3xl font-bold">My Orders 📦</h1>
+    <div
+      className="space-y-6 p-4 min-h-screen 
+      bg-gradient-to-br 
+      from-pink-200/60 via-rose-100/50 to-pink-300/60
+      dark:from-[#1a0f14] dark:via-[#2a121c] dark:to-[#14080d]
+      backdrop-blur-2xl 
+      text-black dark:text-white 
+      transition-all duration-500"
+    >
+      {/* TITLE */}
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-3xl font-bold"
+      >
+        My Orders 📦
+      </motion.h1>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 dark:border-zinc-800 text-sm">
+      {/* TABLE CONTAINER */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="overflow-x-auto rounded-2xl 
+        bg-pink-100/40 dark:bg-pink-500/10 
+        backdrop-blur-2xl 
+        border border-pink-200/40 dark:border-pink-400/10 
+        shadow-[0_8px_32px_rgba(255,105,180,0.2)]"
+      >
+        <table className="min-w-full text-sm">
           {/* HEADER */}
-          <thead className="bg-gray-100 dark:bg-zinc-900">
+          <thead className="bg-pink-200/40 dark:bg-pink-500/10 backdrop-blur-md">
             <tr>
               <th className="border p-2 dark:border-zinc-800">Cake</th>
               <th className="border p-2 dark:border-zinc-800">Image</th>
@@ -74,10 +99,13 @@ export default function OrdersPage() {
           {/* BODY */}
           <tbody>
             {orders.length > 0 ? (
-              orders.map((order) => (
-                <tr
+              orders.map((order, index) => (
+                <motion.tr
                   key={order._id}
-                  className="text-center hover:bg-gray-50 dark:hover:bg-zinc-900/60"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  className="text-center hover:bg-pink-200/30 dark:hover:bg-pink-500/10 transition"
                 >
                   <td className="border p-2 dark:border-zinc-800">
                     {order.cakeName}
@@ -87,7 +115,7 @@ export default function OrdersPage() {
                     <img
                       src={order.image}
                       alt="cake"
-                      className="w-12 h-12 object-cover mx-auto rounded"
+                      className="w-12 h-12 object-cover mx-auto rounded-lg shadow-md"
                     />
                   </td>
 
@@ -123,7 +151,7 @@ export default function OrdersPage() {
                     ${order.price}
                   </td>
 
-                  <td className="border p-2 font-bold text-pink-500 dark:border-zinc-800">
+                  <td className="border p-2 font-bold text-pink-600 dark:text-pink-400 dark:border-zinc-800">
                     ${order.totalPrice}
                   </td>
 
@@ -134,7 +162,7 @@ export default function OrdersPage() {
                   {/* STATUS */}
                   <td className="border p-2 dark:border-zinc-800">
                     <span
-                      className={`px-2 py-1 rounded text-white text-xs ${
+                      className={`px-2 py-1 rounded text-white text-xs shadow ${
                         order.status === "pending"
                           ? "bg-yellow-500"
                           : order.status === "processing"
@@ -153,7 +181,7 @@ export default function OrdersPage() {
                     <button
                       onClick={() => handleDelete(order._id)}
                       disabled={order.status !== "pending"}
-                      className={`px-3 py-1 rounded text-white text-xs ${
+                      className={`px-3 py-1 rounded text-white text-xs transition ${
                         order.status !== "pending"
                           ? "bg-gray-400 cursor-not-allowed"
                           : "bg-red-500 hover:bg-red-600"
@@ -162,7 +190,7 @@ export default function OrdersPage() {
                       Delete
                     </button>
                   </td>
-                </tr>
+                </motion.tr>
               ))
             ) : (
               <tr>
@@ -176,7 +204,7 @@ export default function OrdersPage() {
             )}
           </tbody>
         </table>
-      </div>
+      </motion.div>
     </div>
   );
 }

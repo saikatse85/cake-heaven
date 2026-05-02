@@ -261,7 +261,7 @@ export default function Navbar() {
                       <Link href="/dashboard/all-cakes">AllCakes</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/my-order">My Order</Link>
+                      <Link href="/dashboard/my-orders">My Order</Link>
                     </DropdownMenuItem>
                   </>
                 )}
