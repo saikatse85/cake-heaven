@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState(null);
+  const [address, setAddress] = useState("");
   const [preview, setPreview] = useState(null);
 
   const [password, setPassword] = useState("");
@@ -99,6 +100,7 @@ export default function RegisterPage() {
           email: finalEmail,
           phone: phone,
           image: imageUrl || user.photoURL || "",
+          address: address,
           uid: user.uid,
           password: password,
           role: "client",
@@ -162,6 +164,7 @@ export default function RegisterPage() {
           email: user.email || "",
           phone: "",
           image: user.photoURL || "",
+          address: address,
           uid: user.uid,
           password: "",
           role: "client",
@@ -259,7 +262,12 @@ export default function RegisterPage() {
                 className="w-24 h-24 object-cover rounded-lg mx-auto border"
               />
             )}
-
+            <Input
+              type="text"
+              placeholder="Full Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
             <Input
               type="password"
               placeholder="Password"

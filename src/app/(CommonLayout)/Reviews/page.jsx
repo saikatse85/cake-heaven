@@ -48,7 +48,7 @@ export default function Reviews() {
           }}
         >
           {/* duplicate for smooth loop */}
-          {[...Array(2)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <div key={i} className="flex gap-6">
               {reviews.map((r) => (
                 <Card

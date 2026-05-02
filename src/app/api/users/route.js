@@ -4,7 +4,7 @@ import clientPromise from "@/lib/mongodb";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { name, email, phone, password, image, uid, mode } = body;
+    const { name, email, phone, password, image, address, uid, mode } = body;
 
     const client = await clientPromise;
     const db = client.db("cake-heaven");
@@ -33,6 +33,7 @@ export async function POST(req) {
         email: email || "",
         phone: phone || "",
         image: image || "",
+        address: address || "",
         uid: uid || null,
         password: password || "",
         role: "client",

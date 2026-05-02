@@ -112,7 +112,7 @@ export default function AdminSidebar() {
                 👤 View All Users
               </Link>
               <Link
-                href="/admin/users/roles"
+                href="/dashboard/users/roles"
                 className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 🔑 Assign Role
@@ -191,6 +191,24 @@ export default function AdminSidebar() {
               </Link>
             </div>
           )}
+          <div>
+            <button
+              onClick={() => toggleMenu("profile")}
+              className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
+            >
+              📁 Profile
+            </button>
+            {openMenu === "profile" && (
+              <div className="ml-4 space-y-1 mt-2 text-sm">
+                <Link
+                  href="/dashboard/profile"
+                  className="block hover:text-pink-500 dark:hover:text-pink-400"
+                >
+                  📂 Profile
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

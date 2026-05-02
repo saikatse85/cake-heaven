@@ -222,7 +222,7 @@ export default function Navbar() {
                 </button>
               </DropdownMenuTrigger>
 
-              {/* 🔥 RESTORED GLASSMORPHISM DROPDOWN */}
+              {/*RESTORED GLASSMORPHISM DROPDOWN */}
               <DropdownMenuContent
                 className="
                 w-56 
@@ -254,25 +254,29 @@ export default function Navbar() {
                 </DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
-
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard">Dashboard</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/all-cakes">AllCakes</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/my-order">My Order</Link>
-                </DropdownMenuItem>
-
+                {/* USER MENU */}
+                {role !== "admin" && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/all-cakes">AllCakes</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/my-order">My Order</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {/* ADMIN MENU */}
                 {role === "admin" && (
                   <>
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard/add-product">Add Product</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/all-orders">All Order</Link>
+                    </DropdownMenuItem>
 
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/manage-products">
+                      <Link href="/dashboard/manage-product">
                         Manage Products
                       </Link>
                     </DropdownMenuItem>
