@@ -109,20 +109,6 @@ export default function Navbar() {
     }
   };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     await signOut(auth);
-
-  //     localStorage.removeItem("user");
-
-  //     window.dispatchEvent(new Event("storage"));
-
-  //     window.location.href = "/login";
-  //   } catch (error) {
-  //     console.log("Logout error:", error);
-  //   }
-  // };
-
   const userImage = dbUser?.image || user?.photoURL || null;
   const userName = dbUser?.name || user?.displayName || "User";
 
@@ -134,8 +120,8 @@ export default function Navbar() {
           href="/"
           className="text-2xl flex items-center font-bold text-pink-600 dark:text-pink-400"
         >
-          Cake Heaven
-          <img src="/asset/img/logo.png" className="h-12 w-12" alt="logo" />
+          Desert Heaven
+          <img src="/logo.png" className="h-12 w-12" alt="logo" />
         </Link>
 
         {/* DESKTOP MENU */}
