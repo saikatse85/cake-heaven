@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { uploadImageToCloudinary } from "../utils/cloudinaryUpload";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -26,6 +27,8 @@ export default function RegisterPage() {
   const [image, setImage] = useState(null);
   const [address, setAddress] = useState("");
   const [preview, setPreview] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -33,6 +36,13 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
+
+  // 🔐 PASSWORD VALIDATION (NEW ADDED)
+  const isStrongPassword = (password) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/.test(
+      password,
+    );
+  };
 
   // 🔐 REGISTER
   const handleRegister = async (e) => {
@@ -53,6 +63,14 @@ export default function RegisterPage() {
 
     if (phone.length < 11) {
       setFormError("Phone number must be at least 11 digits");
+      return;
+    }
+
+    // 🔐 NEW PASSWORD RULE CHECK
+    if (!isStrongPassword(password)) {
+      setFormError(
+        "Password must be 6+ chars, include uppercase, lowercase, number & special character",
+      );
       return;
     }
 
@@ -136,7 +154,6 @@ export default function RegisterPage() {
         showConfirmButton: false,
       });
 
-      //GO HOME
       router.push("/");
     } catch (err) {
       setError(err.message);
@@ -177,7 +194,6 @@ export default function RegisterPage() {
         console.log("GOOGLE REGISTER ERROR:", data);
       }
 
-      // ✅ Auto login
       const userData = {
         uid: user.uid,
         name: user.displayName,
@@ -208,7 +224,6 @@ export default function RegisterPage() {
     <div className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-pink-50 via-white to-rose-100 dark:from-pink-950 dark:via-black dark:to-rose-950">
       <Card className="w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
-          {/* HEADER */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-pink-500">
               Create Account 🎂
@@ -216,7 +231,6 @@ export default function RegisterPage() {
             <p className="text-gray-500 text-sm">Join us and order cakes</p>
           </div>
 
-          {/* ERROR */}
           {formError && (
             <p className="text-red-500 text-sm text-center font-medium">
               {formError}
@@ -225,7 +239,6 @@ export default function RegisterPage() {
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          {/* FORM */}
           <form onSubmit={handleRegister} className="space-y-4">
             <Input
               placeholder="Full Name"
@@ -255,30 +268,49 @@ export default function RegisterPage() {
               }}
             />
 
-            {/* PREVIEW */}
             {preview && (
               <img
                 src={preview}
                 className="w-24 h-24 object-cover rounded-lg mx-auto border"
               />
             )}
+
             <Input
               type="text"
               placeholder="Full Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
-            <Input
-              type="password"
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
 
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
+            </div>
+
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-2.5 cursor-pointer text-gray-500"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
+            </div>
 
             <Button
               type="submit"
@@ -289,7 +321,6 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          {/* GOOGLE */}
           <Button
             onClick={handleGoogleRegister}
             variant="outline"
@@ -298,7 +329,6 @@ export default function RegisterPage() {
             Google Signup
           </Button>
 
-          {/* LOGIN */}
           <p className="text-center text-sm text-gray-500">
             Already have account?{" "}
             <Link href="/login" className="text-pink-500">
