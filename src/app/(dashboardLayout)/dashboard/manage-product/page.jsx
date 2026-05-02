@@ -18,8 +18,17 @@ export default function ManageProduct() {
 
   // Delete handler
   const handleDelete = async (id) => {
-    const confirmDelete = confirm("Are you sure you want to delete?");
-    if (!confirmDelete) return;
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This cake will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ec4899",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
 
     const res = await fetch(`/api/cakes/${id}`, {
       method: "DELETE",
@@ -27,9 +36,20 @@ export default function ManageProduct() {
 
     if (res.ok) {
       setCakes((prev) => prev.filter((item) => item._id !== id));
-      alert("Delete Successfully");
+
+      Swal.fire({
+        title: "Deleted!",
+        text: "Cake has been deleted successfully.",
+        icon: "success",
+        confirmButtonColor: "#ec4899",
+      });
     } else {
-      alert("Delete failed");
+      Swal.fire({
+        title: "Error!",
+        text: "Delete failed.",
+        icon: "error",
+        confirmButtonColor: "#ec4899",
+      });
     }
   };
 

@@ -27,31 +27,28 @@ export default function AddCakePage() {
 
     setUploading(true);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
 
-    reader.onloadend = async () => {
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: reader.result }),
-        });
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok) {
-          setFormData((prev) => ({
-            ...prev,
-            image: data.url,
-          }));
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setUploading(false);
+      if (res.ok) {
+        setFormData((prev) => ({
+          ...prev,
+          image: data.url,
+        }));
       }
-    };
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -190,10 +187,30 @@ export default function AddCakePage() {
 
             {formData.image && (
               <div className="flex justify-center">
-                <img
-                  src={formData.image}
-                  className="w-24 h-24 object-cover rounded-lg border dark:border-pink-400/20 shadow-md"
-                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative group"
+                >
+                  {/* Glow background */}
+                  <div className="absolute -inset-1 bg-pink-500/30 blur-xl rounded-2xl group-hover:bg-pink-500/40 transition"></div>
+
+                  {/* Image container */}
+                  <div className="relative p-1 rounded-2xl bg-white/30 dark:bg-pink-500/10 backdrop-blur-xl border border-pink-200/40 dark:border-pink-400/20 shadow-lg">
+                    <img
+                      src={formData.image}
+                      alt="preview"
+                      className="w-28 h-28 object-cover rounded-xl"
+                    />
+
+                    {/* Label */}
+                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2">
+                      <span className="text-[10px] px-2 py-1 rounded-full bg-pink-500 text-white shadow-md">
+                        Preview
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
             )}
 

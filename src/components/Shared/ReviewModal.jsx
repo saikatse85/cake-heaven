@@ -11,36 +11,29 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
+  const [preview, setPreview] = useState("");
 
-  // ☁️ CLOUDINARY UPLOAD FUNCTION
+  // ☁️ CLOUDINARY UPLOAD (FIXED FOR VERCEL)
   const handleImageUpload = async (file) => {
-    const reader = new FileReader();
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
 
-    reader.onloadend = async () => {
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            image: reader.result,
-          }),
-        });
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload, // ✅ FIX: multipart/form-data
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok) {
-          setImage(data.url); // ✅ Cloudinary URL saved
-        } else {
-          Swal.fire("Upload failed", data.error, "error");
-        }
-      } catch (err) {
-        Swal.fire("Error", "Image upload failed", "error");
+      if (res.ok) {
+        setImage(data.url);
+      } else {
+        Swal.fire("Upload failed", data.error, "error");
       }
-    };
-
-    reader.readAsDataURL(file);
+    } catch (err) {
+      Swal.fire("Error", "Image upload failed", "error");
+    }
   };
 
   const handleSubmit = async () => {
@@ -78,6 +71,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
         onClose();
         setName("");
         setImage("");
+        setPreview("");
         setRating(0);
         setComment("");
       } else {
@@ -100,7 +94,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Background Blur */}
+          {/* BACKDROP */}
           <motion.div
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
             initial={{ opacity: 0 }}
@@ -109,7 +103,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
             onClick={onClose}
           />
 
-          {/* Modal */}
+          {/* MODAL */}
           <motion.div
             className="fixed inset-0 flex items-center justify-center z-50 px-4"
             initial={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -124,20 +118,19 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
               backdrop-blur-xl border border-white/30 
               shadow-2xl space-y-4"
             >
-              {/* Title */}
+              {/* TITLE */}
               <h2 className="text-xl font-bold text-center">
                 ✨ Share Your Sweet Experience
               </h2>
 
-              {/* Cake Name */}
               <p className="text-center text-sm text-gray-500">{cake.name}</p>
 
-              {/* ⭐ Star Rating */}
+              {/* ⭐ RATING */}
               <div className="flex justify-center gap-2 text-2xl">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
-                    className={`cursor-pointer transition duration-150 ${
+                    className={`cursor-pointer transition ${
                       (hover || rating) >= star
                         ? "text-yellow-400 scale-110"
                         : "text-gray-300"
@@ -151,7 +144,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
                 ))}
               </div>
 
-              {/* Name */}
+              {/* NAME */}
               <input
                 type="text"
                 placeholder="Your Name"
@@ -160,36 +153,41 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
                 className="w-full p-2 rounded-lg bg-white/40 dark:bg-zinc-800/40 border border-white/30 text-sm"
               />
 
-              {/* ☁️ CLOUDINARY IMAGE UPLOAD */}
+              {/* IMAGE UPLOAD */}
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  if (file) handleImageUpload(file);
+                  if (!file) return;
+
+                  setPreview(URL.createObjectURL(file)); // instant preview (NO DESIGN CHANGE)
+                  handleImageUpload(file); // cloud upload
                 }}
                 className="w-full p-2 rounded-lg bg-white/40 dark:bg-zinc-800/40 border border-white/30 text-sm"
               />
 
-              {/* Preview */}
-              {image && (
-                <img
-                  src={image}
-                  className="w-20 h-20 object-cover rounded-lg border"
-                />
+              {/* PREVIEW */}
+              {(preview || image) && (
+                <div className="flex justify-center">
+                  <img
+                    src={preview || image}
+                    className="w-20 h-20 object-cover rounded-lg border shadow-md"
+                    alt="preview"
+                  />
+                </div>
               )}
 
-              {/* Comment */}
+              {/* COMMENT */}
               <textarea
                 placeholder="Tell us what you loved about the cake..."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/40 dark:bg-zinc-800/40 
-                border border-white/30 outline-none text-sm"
+                className="w-full p-3 rounded-xl bg-white/40 dark:bg-zinc-800/40 border border-white/30 outline-none text-sm"
                 rows={4}
               />
 
-              {/* Buttons */}
+              {/* BUTTONS */}
               <div className="flex flex-col gap-3">
                 <Button
                   className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white"
@@ -197,6 +195,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
                 >
                   Submit
                 </Button>
+
                 <Button variant="outline" className="w-full" onClick={onClose}>
                   Cancel
                 </Button>
