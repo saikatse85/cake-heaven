@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { logoutUser } from "@/app/utils/logout";
 
 export default function AdminSidebar() {
   const [openMenu, setOpenMenu] = useState(null);
@@ -13,7 +14,8 @@ export default function AdminSidebar() {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutUser();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 

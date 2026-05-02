@@ -204,9 +204,11 @@ export default function LoginPage() {
       <Card className="relative w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-pink-500">
-              Welcome Back 🎂
-            </h1>
+            <Link href="/">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-pink-500">
+                Welcome Back 🎂
+              </h1>
+            </Link>
             <p className="text-gray-500 text-sm">
               Login to order your favorite cakes
             </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { logoutUser } from "@/app/utils/logout";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,9 +16,11 @@ export default function ClientSidebar() {
     { name: "👤 Profile", href: "/dashboard/profile" },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutUser();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
     router.push("/");
   };
 
