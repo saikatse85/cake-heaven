@@ -88,7 +88,23 @@ export default function OrderPage() {
       router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
       return;
     }
+    // ✅ AFTER all validations (name, phone, user check)
 
+    // 🔥 Confirm Order Alert
+    const confirm = await Swal.fire({
+      title: "Confirm Order?",
+      text: "Do you want to place this order?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#22c55e",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Yes, place order",
+      cancelButtonText: "No, cancel",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    // ⬇️ your existing code continues unchanged
     const orderData = {
       userEmail: user.email,
       userName: name,
