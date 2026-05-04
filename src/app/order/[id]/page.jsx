@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import Swal from "sweetalert2";
 import Loading from "@/app/loading";
+import WhatsAppOrderButton from "@/components/Shared/WhatsAppOrderButton";
+import BkashPaymentButton from "@/components/Shared/BikashPaymentButton";
 
 export default function OrderPage() {
   const { id } = useParams();
@@ -259,6 +261,19 @@ export default function OrderPage() {
           <ConfirmOrderButton onClick={createOrder}>
             Confirm Order 🚀
           </ConfirmOrderButton>
+          <WhatsAppOrderButton
+            cake={cake}
+            name={name}
+            phone={phone}
+            size={size}
+            flavor={flavor}
+            qty={qty}
+            totalPrice={totalPrice}
+            address={address}
+            date={date}
+            message={message}
+          />
+          <BkashPaymentButton totalPrice={totalPrice} />
         </div>
       </motion.div>
     </div>
