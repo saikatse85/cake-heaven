@@ -21,7 +21,7 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
 
         setProductReviews(data);
 
-        // ✅ calculate average rating
+        //calculate average rating
         if (data.length > 0) {
           const avg =
             data.reduce((acc, item) => acc + Number(item.rating), 0) /

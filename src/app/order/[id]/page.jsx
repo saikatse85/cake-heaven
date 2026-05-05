@@ -106,7 +106,6 @@ export default function OrderPage() {
 
     if (!confirm.isConfirmed) return;
 
-    // ⬇️ your existing code continues unchanged
     const orderData = {
       userEmail: user.email,
       userName: name,

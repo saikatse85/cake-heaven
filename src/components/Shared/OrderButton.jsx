@@ -7,6 +7,7 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { motion } from "framer-motion";
 import gsap from "gsap";
+import Swal from "sweetalert2";
 
 export default function OrderButton({ cakeId }) {
   const router = useRouter();
@@ -57,7 +58,12 @@ export default function OrderButton({ cakeId }) {
 
     setTimeout(() => {
       if (!user) {
-        alert("For Order you need to login first");
+        Swal.fire({
+          icon: "warning",
+          title: "Login Required",
+          text: "For order you need to login first",
+          confirmButtonText: "OK",
+        });
         router.push(`/login?redirect=/order/${cakeId}`);
       } else {
         router.push(`/order/${cakeId}`);
