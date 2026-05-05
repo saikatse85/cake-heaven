@@ -70,7 +70,7 @@ export function AllCakes() {
                 {/* Image with zoom effect */}
                 <div className="overflow-hidden">
                   <motion.img
-                    src={cake?.image}
+                    src={cake?.image || "/cake-placeholder.jpg"}
                     alt={cake?.name}
                     className="h-48 w-full object-cover"
                     whileHover={{ scale: 1.1 }}

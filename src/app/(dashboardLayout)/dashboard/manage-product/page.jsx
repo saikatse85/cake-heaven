@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 export default function ManageProduct() {
   const [cakes, setCakes] = useState([]);
@@ -37,7 +38,7 @@ export default function ManageProduct() {
     if (res.ok) {
       setCakes((prev) => prev.filter((item) => item._id !== id));
 
-      Swal.fire({
+      swal.fire({
         title: "Deleted!",
         text: "Cake has been deleted successfully.",
         icon: "success",
@@ -90,11 +91,17 @@ export default function ManageProduct() {
               hover:shadow-[0_12px_40px_rgba(255,105,180,0.35)]
               transition"
             >
-              <img
-                src={cake.image}
-                alt={cake.name}
-                className="h-40 w-full object-cover"
-              />
+              {cake?.image ? (
+                <img
+                  src={cake.image}
+                  alt={cake?.name}
+                  className="h-40 w-full object-cover"
+                />
+              ) : (
+                <div className="h-40 w-full flex items-center justify-center bg-gray-100 text-gray-400">
+                  No Image
+                </div>
+              )}
 
               <CardContent className="p-4 space-y-2">
                 <h3 className="font-semibold text-lg">{cake.name}</h3>

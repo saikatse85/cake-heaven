@@ -89,12 +89,12 @@ export default function RegisterPage() {
       }
 
       // Firebase Auth
-      const finalEmail =
+      const loginEmail =
         email?.trim() !== "" ? email : `${phone}@cake-heaven.local`;
 
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        finalEmail,
+        loginEmail,
         password,
       );
 
@@ -115,7 +115,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           mode: "register",
           name: name || user.displayName || "",
-          email: finalEmail,
+          email: loginEmail,
           phone: phone,
           image: imageUrl || user.photoURL || "",
           address: address,

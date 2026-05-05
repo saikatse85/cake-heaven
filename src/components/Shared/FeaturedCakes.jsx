@@ -75,13 +75,19 @@ export function FeaturedCakes() {
               <Card className="group hover:shadow-xl transition rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border dark:border-zinc-800">
                 {/* Image zoom */}
                 <div className="overflow-hidden">
-                  <motion.img
-                    src={cake?.image}
-                    alt={cake?.name}
-                    className="h-48 w-full object-cover"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.4 }}
-                  />
+                  {cake?.image ? (
+                    <motion.img
+                      src={cake.image}
+                      alt={cake?.name}
+                      className="h-48 w-full object-cover"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.4 }}
+                    />
+                  ) : (
+                    <div className="h-48 w-full flex items-center justify-center bg-gray-100 text-gray-400">
+                      No Image
+                    </div>
+                  )}
                 </div>
 
                 <CardContent className="p-4 space-y-2">

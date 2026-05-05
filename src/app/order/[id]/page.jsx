@@ -161,10 +161,17 @@ export default function OrderPage() {
       <motion.div ref={cardRef} className="w-full max-w-xl">
         <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 p-8 rounded-2xl space-y-5">
           {/* 🍰 Cake Image */}
-          <img
-            src={cake.image}
-            className="w-full h-56 object-cover rounded-xl"
-          />
+          {cake?.image ? (
+            <img
+              src={cake.image}
+              className="w-full h-56 object-cover"
+              alt={cake?.name || "cake"}
+            />
+          ) : (
+            <div className="w-full h-56 flex items-center justify-center bg-gray-100 text-gray-400">
+              No Image
+            </div>
+          )}
 
           {/* Name + Price */}
           <div className="flex justify-between">

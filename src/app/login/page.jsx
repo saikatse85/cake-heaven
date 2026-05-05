@@ -77,14 +77,18 @@ export default function LoginPage() {
       const mongoUser = data.user;
 
       // =========================
-      // 3. FIREBASE LOGIN (ONLY ONCE ✅)
+      // 3. FIREBASE LOGIN
       // =========================
       let firebaseUser = null;
 
       try {
         const { signInWithEmailAndPassword } = await import("firebase/auth");
 
-        const loginId = email || `${phone}@cake-heaven.local`; // 🔥 MUST match register
+        let loginId = email;
+
+        if (!email && phone) {
+          loginId = mongoUser.email;
+        }
 
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -129,7 +133,7 @@ export default function LoginPage() {
         showConfirmButton: false,
       });
 
-      router.push("/");
+      router.push(decodeURIComponent(redirect));
     } catch (err) {
       console.log(err);
       setError("Login failed. Try again.");
@@ -146,7 +150,7 @@ export default function LoginPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // ✅ Save to MongoDB (with correct mode)
+      //Save to MongoDB
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -159,19 +163,19 @@ export default function LoginPage() {
           phone: "",
           image: user.photoURL || "",
           uid: user.uid,
-          password: "", // Google user
+          password: "",
           role: "client",
         }),
       });
 
       const data = await res.json();
 
-      // ✅ Ignore duplicate user error (IMPORTANT)
+      // Ignore duplicate user error
       if (!res.ok && data.message !== "User already exists") {
         console.log("GOOGLE LOGIN ERROR:", data);
       }
 
-      // ✅ Save session
+      // Save session
       const userData = {
         uid: user.uid,
         name: user.displayName,
@@ -182,7 +186,7 @@ export default function LoginPage() {
       };
 
       localStorage.setItem("user", JSON.stringify(userData));
-      window.dispatchEvent(new Event("storage")); // 🔥 update navbar
+      window.dispatchEvent(new Event("storage"));
 
       Swal.fire({
         icon: "success",

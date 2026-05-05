@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 export default function AddCakePage() {
   const [formData, setFormData] = useState({
@@ -43,9 +44,28 @@ export default function AddCakePage() {
           ...prev,
           image: data.url,
         }));
+
+        Swal.fire({
+          icon: "success",
+          title: "Image Uploaded 🎉",
+          text: "Your image uploaded successfully",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Upload Failed",
+          text: data.error || "Image upload failed",
+        });
       }
     } catch (err) {
       console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: "Image upload failed",
+      });
     } finally {
       setUploading(false);
     }
@@ -53,6 +73,23 @@ export default function AddCakePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // basic validation alert
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.price ||
+      !formData.rating ||
+      !formData.description ||
+      !formData.image
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields",
+        text: "Please fill all required fields",
+      });
+      return;
+    }
 
     const newCake = {
       ...formData,
@@ -73,6 +110,15 @@ export default function AddCakePage() {
 
       if (res.ok) {
         setMessage("Cake added successfully 🎉");
+
+        Swal.fire({
+          icon: "success",
+          title: "Success 🎂",
+          text: "Cake added successfully!",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
         setFormData({
           name: "",
           category: "",
@@ -83,10 +129,20 @@ export default function AddCakePage() {
           available: true,
         });
       } else {
-        setMessage(data.error || "Something went wrong");
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: data.error || "Something went wrong",
+        });
       }
     } catch (error) {
       setMessage("Error adding cake");
+
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: "Failed to add cake",
+      });
     }
   };
 
@@ -192,10 +248,8 @@ export default function AddCakePage() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="relative group"
                 >
-                  {/* Glow background */}
                   <div className="absolute -inset-1 bg-pink-500/30 blur-xl rounded-2xl group-hover:bg-pink-500/40 transition"></div>
 
-                  {/* Image container */}
                   <div className="relative p-1 rounded-2xl bg-white/30 dark:bg-pink-500/10 backdrop-blur-xl border border-pink-200/40 dark:border-pink-400/20 shadow-lg">
                     <img
                       src={formData.image}
@@ -203,7 +257,6 @@ export default function AddCakePage() {
                       className="w-28 h-28 object-cover rounded-xl"
                     />
 
-                    {/* Label */}
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2">
                       <span className="text-[10px] px-2 py-1 rounded-full bg-pink-500 text-white shadow-md">
                         Preview

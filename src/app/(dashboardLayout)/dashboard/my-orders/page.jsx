@@ -134,12 +134,18 @@ export default function OrdersPage() {
                     {order.cakeName}
                   </td>
 
-                  <td className="border p-2 dark:border-zinc-800">
-                    <img
-                      src={order.image}
-                      alt="cake"
-                      className="w-12 h-12 object-cover mx-auto rounded-lg shadow-md"
-                    />
+                  <td className="border p-2">
+                    {order?.image ? (
+                      <img
+                        src={order.image}
+                        alt="cake"
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 flex items-center justify-center bg-gray-100 text-gray-400 text-xs rounded">
+                        N/A
+                      </div>
+                    )}
                   </td>
 
                   <td className="border p-2 dark:border-zinc-800">
