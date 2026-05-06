@@ -16,7 +16,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        // ✅ handle logout properly
+  
         setUserId(null);
         setCart([]);
         return;
@@ -39,32 +39,38 @@ export function CartProvider({ children }) {
 
   // ADD TO CART
   const addToCart = (product) => {
-    if (!userId) {
-      console.log("User not logged in");
-      return;
+  if (!userId) {
+    console.log("User not logged in");
+    return;
+  }
+
+  setCart((prev) => {
+    // match with size + flavor also
+    const exists = prev.find(
+      (item) =>
+        item._id === product._id &&
+        item.size === product.size &&
+        item.flavor === product.flavor
+    );
+
+    let updated;
+
+    if (exists) {
+      updated = prev.map((item) =>
+        item._id === product._id &&
+        item.size === product.size &&
+        item.flavor === product.flavor
+          ? { ...item, quantity: item.quantity + product.quantity }
+          : item
+      );
+    } else {
+      updated = [...prev, product];
     }
 
-    setCart((prev) => {
-      const exists = prev.find((item) => item._id === product._id);
-
-      let updated;
-
-      if (exists) {
-        updated = prev.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        updated = [...prev, { ...product, quantity: 1 }];
-      }
-
-      saveCart(userId, updated); // ✅ use helper
-
-      return updated;
-    });
-  };
-
+    saveCart(userId, updated);
+    return updated;
+  });
+};
   // REMOVE ITEM
   const removeFromCart = (id) => {
     if (!userId) return;

@@ -96,11 +96,17 @@ export default function AllOrders() {
                   <td className="border p-2">{order.cakeName}</td>
 
                   <td className="border p-2">
-                    <img
-                      src={order.image}
-                      alt="cake"
-                      className="w-12 h-12 object-cover mx-auto rounded-lg shadow-md"
-                    />
+                    {order?.image ? (
+                      <img
+                        src={order.image}
+                        alt="cake"
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 flex items-center justify-center bg-gray-100 text-gray-400 text-xs rounded">
+                        No Image
+                      </div>
+                    )}
                   </td>
 
                   <td className="border p-2">{order.size}</td>
@@ -128,11 +134,15 @@ export default function AllOrders() {
                       className={`px-2 py-1 rounded text-white text-xs shadow ${
                         order.status === "pending"
                           ? "bg-yellow-500"
-                          : order.status === "processing"
-                            ? "bg-blue-500"
-                            : order.status === "delivered"
-                              ? "bg-green-500"
-                              : "bg-red-500"
+                          : order.status === "confirm"
+                            ? "bg-green-600"
+                            : order.status === "processing"
+                              ? "bg-blue-500"
+                              : order.status === "out_for_delivery"
+                                ? "bg-purple-500"
+                                : order.status === "delivered"
+                                  ? "bg-green-500"
+                                  : "bg-red-500"
                       }`}
                     >
                       {order.status}
@@ -154,11 +164,15 @@ export default function AllOrders() {
                         handleStatusChange(order._id, e.target.value)
                       }
                       className="border p-1 rounded text-xs 
-                      bg-pink-100/60 dark:bg-pink-500/10 
-                      backdrop-blur-md"
+                      bg-pink-950 dark:bg-pink-500/20 
+                      text-black dark:text-white 
+                        backdrop-blur-md 
+                        focus:outline-none focus:ring-2 focus:ring-pink-400"
                     >
                       <option value="pending">Pending</option>
+                      <option value="confirm">Confirmed</option>
                       <option value="processing">Processing</option>
+                      <option value="out_for_delivery">Out for Delivery</option>
                       <option value="delivered">Delivered</option>
                       <option value="cancelled">Cancelled</option>
                     </select>

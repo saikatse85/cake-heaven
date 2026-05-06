@@ -102,7 +102,7 @@ export function FeaturedCakes() {
                   <p className="text-pink-500 font-bold">
                     $ {cake?.price} Only
                   </p>
-                  {/* ✅ Add to Cart Button */}
+                  {/*Add to Cart Button */}
                   <AddToCartButton
                     addToCart={addToCart}
                     cake={cake}

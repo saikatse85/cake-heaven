@@ -28,6 +28,11 @@ export default function OrderPage() {
   const [address, setAddress] = useState("");
   const [qty, setQty] = useState(1);
   const [date, setDate] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+
+  // ✅ ADDED STATES
+  const [design, setDesign] = useState("");
+  const [referenceImage, setReferenceImage] = useState("");
 
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
@@ -90,9 +95,7 @@ export default function OrderPage() {
       router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
       return;
     }
-    // ✅ AFTER all validations (name, phone, user check)
 
-    // 🔥 Confirm Order Alert
     const confirm = await Swal.fire({
       title: "Confirm Order?",
       text: "Do you want to place this order?",
@@ -123,6 +126,10 @@ export default function OrderPage() {
       deliveryDate: date,
       status: "pending",
       createdAt: new Date(),
+
+      // ✅ ADDED FIELDS
+      design,
+      referenceImage,
     };
 
     const res = await fetch("/api/orders", {
@@ -199,19 +206,34 @@ export default function OrderPage() {
             <option>Strawberry</option>
           </select>
 
+          {/* ✅ ADDED DESIGN / THEME */}
+          <input
+            placeholder="Design / Theme (e.g. Birthday, Wedding)"
+            value={design}
+            onChange={(e) => setDesign(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          />
+
+          {/* ✅ ADDED IMAGE URL (Cloudinary ready) */}
+          <input
+            placeholder="Reference Image URL (Cloudinary link)"
+            value={referenceImage}
+            onChange={(e) => setReferenceImage(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
+          />
+
           {/* Message */}
           <textarea
             placeholder="Custom message on cake"
             value={message}
-            required
             onChange={(e) => setMessage(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
+
           {/* Address */}
           <textarea
             placeholder="Customer Address"
             value={address}
-            required
             onChange={(e) => setAddress(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
@@ -224,9 +246,7 @@ export default function OrderPage() {
             >
               -
             </button>
-
             <span>{qty}</span>
-
             <button
               className="px-3 py-1 border rounded dark:border-zinc-700"
               onClick={() => setQty(qty + 1)}
@@ -246,27 +266,37 @@ export default function OrderPage() {
           {/* Contact */}
           <input
             placeholder="Name"
-            required
             onChange={(e) => setName(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
           <input
             placeholder="Phone"
-            required
             onChange={(e) => setPhone(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* 💰 Total */}
+          {/* Total */}
           <div className="text-lg font-bold text-pink-500">
             Total: ${totalPrice}
           </div>
+
+          {/* Payment */}
+          <select
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="w-full p-2 rounded border bg-white dark:bg-zinc-800"
+          >
+            <option value="COD">Cash on Delivery</option>
+            <option value="BKASH">bKash</option>
+            <option value="NAGAD">Nagad</option>
+          </select>
 
           {/* Button */}
           <ConfirmOrderButton onClick={createOrder}>
             Confirm Order 🚀
           </ConfirmOrderButton>
+
           <WhatsAppOrderButton
             cake={cake}
             name={name}
@@ -279,6 +309,7 @@ export default function OrderPage() {
             date={date}
             message={message}
           />
+
           <BkashPaymentButton totalPrice={totalPrice} />
         </div>
       </motion.div>

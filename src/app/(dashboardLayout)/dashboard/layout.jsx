@@ -77,7 +77,9 @@ export default function DashboardLayout({ children }) {
     <div className="flex min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-100">
       {userRole === "admin" ? <AdminSidebar /> : <ClientSidebar />}
 
-      <main className="flex-1 ml-64 ">{children}</main>
+      <main className="flex-1 ml-64 overflow-x-auto overflow-y-auto">
+        <div className="min-w-max">{children}</div>
+      </main>
     </div>
   );
 }

@@ -49,7 +49,6 @@ export default function OrdersPage() {
 
       setOrders((prev) => prev.filter((order) => order._id !== id));
 
-      // optional success alert (does not change logic)
       Swal.fire({
         icon: "success",
         title: "Deleted!",
@@ -87,7 +86,7 @@ export default function OrdersPage() {
         My Orders 📦
       </motion.h1>
 
-      {/* TABLE CONTAINER */}
+      {/* TABLE */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -103,6 +102,15 @@ export default function OrdersPage() {
             <tr>
               <th className="border p-2 dark:border-zinc-800">Cake</th>
               <th className="border p-2 dark:border-zinc-800">Image</th>
+
+              {/* ➕ ADDED */}
+              <th className="border p-2 dark:border-zinc-800">
+                Design / Theme
+              </th>
+              <th className="border p-2 dark:border-zinc-800">
+                Reference Image
+              </th>
+
               <th className="border p-2 dark:border-zinc-800">Name</th>
               <th className="border p-2 dark:border-zinc-800">Phone</th>
               <th className="border p-2 dark:border-zinc-800">Email</th>
@@ -114,6 +122,7 @@ export default function OrdersPage() {
               <th className="border p-2 dark:border-zinc-800">Price</th>
               <th className="border p-2 dark:border-zinc-800">Total</th>
               <th className="border p-2 dark:border-zinc-800">Delivery</th>
+              <th className="border p-2 dark:border-zinc-800">Payment</th>
               <th className="border p-2 dark:border-zinc-800">Status</th>
               <th className="border p-2 dark:border-zinc-800">Action</th>
             </tr>
@@ -142,18 +151,35 @@ export default function OrdersPage() {
                         className="w-12 h-12 object-cover rounded"
                       />
                     ) : (
-                      <div className="w-12 h-12 flex items-center justify-center bg-gray-100 text-gray-400 text-xs rounded">
-                        N/A
-                      </div>
+                      <div className="text-xs text-gray-400">N/A</div>
+                    )}
+                  </td>
+
+                  {/* ➕ ADDED FIELDS (NO STYLE CHANGE) */}
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.design || order.theme || "N/A"}
+                  </td>
+
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.referenceImage ? (
+                      <img
+                        src={order.referenceImage}
+                        alt="ref"
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    ) : (
+                      <span className="text-xs text-gray-400">N/A</span>
                     )}
                   </td>
 
                   <td className="border p-2 dark:border-zinc-800">
                     {order.userName}
                   </td>
+
                   <td className="border p-2 dark:border-zinc-800">
                     {order.phone}
                   </td>
+
                   <td className="border p-2 dark:border-zinc-800">
                     {order.userEmail}
                   </td>
@@ -161,6 +187,7 @@ export default function OrdersPage() {
                   <td className="border p-2 dark:border-zinc-800">
                     {order.size}
                   </td>
+
                   <td className="border p-2 dark:border-zinc-800">
                     {order.flavor}
                   </td>
@@ -176,6 +203,7 @@ export default function OrdersPage() {
                   <td className="border p-2 dark:border-zinc-800">
                     {order.quantity}
                   </td>
+
                   <td className="border p-2 dark:border-zinc-800">
                     ${order.price}
                   </td>
@@ -188,7 +216,12 @@ export default function OrdersPage() {
                     {order.deliveryDate}
                   </td>
 
-                  {/* STATUS */}
+                  <td className="border p-2 dark:border-zinc-800">
+                    {order.paymentMethod === "COD"
+                      ? "Cash on Delivery"
+                      : order.paymentMethod || "COD"}
+                  </td>
+
                   <td className="border p-2 dark:border-zinc-800">
                     <span
                       className={`px-2 py-1 rounded text-white text-xs shadow ${
@@ -205,7 +238,6 @@ export default function OrdersPage() {
                     </span>
                   </td>
 
-                  {/* ACTION */}
                   <td className="border p-2 dark:border-zinc-800">
                     <button
                       onClick={() => handleDelete(order._id)}
@@ -224,7 +256,7 @@ export default function OrdersPage() {
             ) : (
               <tr>
                 <td
-                  colSpan="14"
+                  colSpan="17"
                   className="p-4 text-center text-gray-500 dark:text-gray-400"
                 >
                   No orders found

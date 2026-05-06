@@ -25,9 +25,12 @@ export async function POST(req) {
       quantity: body.quantity,
       price: body.price,
       totalPrice: body.totalPrice,
+      paymentMethod: body.paymentMethod || "COD",
 
       deliveryDate: body.deliveryDate,
-
+      design: body.design || "",
+      referenceImage: body.referenceImage || "",
+      
       status: body.status || "pending",
       createdAt: new Date().toISOString(),
     };

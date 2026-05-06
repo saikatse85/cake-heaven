@@ -7,12 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import ReviewModal from "./ReviewModal";
+import { useCart } from "@/context/CartContext";
+import Swal from "sweetalert2";
 
 export default function CakeDetailsClient({ cake, relatedCakes }) {
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedFlavor, setSelectedFlavor] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
   const [productReviews, setProductReviews] = useState([]);
   const [rating, setRating] = useState(0);
   const [openReview, setOpenReview] = useState(false);
+  const { addToCart } = useCart();
 
+  const defaultSpecs = {
+    size: "1 Pound / 2 Pound / 3 Pound",
+    flavor: "Chocolate / Vanilla / Strawberry",
+    serving: "6 - 10 People",
+  };
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -98,7 +110,7 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
         >
           <h1 className="text-3xl font-bold">{cake.name}</h1>
 
-          {/* ⭐ Rating */}
+          {/* Rating */}
           <div className="flex items-center gap-2">
             <div className="text-yellow-400 text-lg">
               {"⭐".repeat(Math.round(rating))}
@@ -123,12 +135,84 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
             </span>
           </div>
 
+          {/* Customization */}
+          <div className="space-y-3">
+            {/* Size */}
+            <div>
+              <p className="text-sm font-medium">Select Size</p>
+              <select
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                className="w-full border rounded-lg p-2 dark:bg-zinc-900"
+              >
+                <option value="">Choose Size</option>
+                <option value="1 Pound">1 Pound</option>
+                <option value="2 Pound">2 Pound</option>
+                <option value="3 Pound">3 Pound</option>
+              </select>
+            </div>
+
+            {/* Flavor */}
+            <div>
+              <p className="text-sm font-medium">Select Flavor</p>
+              <select
+                value={selectedFlavor}
+                onChange={(e) => setSelectedFlavor(e.target.value)}
+                className="w-full border rounded-lg p-2 dark:bg-zinc-900"
+              >
+                <option value="">Choose Flavor</option>
+                <option value="Chocolate">Chocolate</option>
+                <option value="Vanilla">Vanilla</option>
+                <option value="Strawberry">Strawberry</option>
+              </select>
+            </div>
+
+            {/* Quantity */}
+            <div>
+              <p className="text-sm font-medium">Quantity</p>
+              <input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="w-full border rounded-lg p-2 dark:bg-zinc-900"
+              />
+            </div>
+          </div>
+
           {/* Order Button */}
           <motion.div whileTap={{ scale: 0.95 }}>
             <OrderButton cakeId={cake._id} />
           </motion.div>
+          {/*Add to cart*/}
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => {
+                if (!selectedSize || !selectedFlavor) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Hold on!",
+                    text: "Please select both size and flavor to continue.",
+                    confirmButtonText: "Got it",
+                    confirmButtonColor: "#ff4d4f",
+                  });
+                  return;
+                }
 
-          {/* ✨ Review Button */}
+                addToCart({
+                  ...cake,
+                  size: selectedSize,
+                  flavor: selectedFlavor,
+                  quantity,
+                });
+              }}
+              className="w-full bg-black dark:bg-pink-500 text-white"
+            >
+              🛒 Add to Cart
+            </Button>
+          </motion.div>
+
+          {/* Review Button */}
           <motion.div
             whileHover={{ scale: 1.06, y: -2 }}
             whileTap={{ scale: 0.94 }}
@@ -152,10 +236,20 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
         <CardContent className="p-6 space-y-3">
           <h2 className="text-xl font-semibold">Specifications</h2>
           <ul className="text-gray-600 dark:text-gray-300 space-y-1">
-            <li>Size: {cake.specs?.size}</li>
-            <li>Flavor: {cake.specs?.flavor}</li>
-            <li>Serving: {cake.specs?.serving}</li>
+            <li>Size: {cake.specs?.size || defaultSpecs.size}</li>
+            <li>Flavor: {cake.specs?.flavor || defaultSpecs.flavor}</li>
+            <li>Serving: {cake.specs?.serving || defaultSpecs.serving}</li>
           </ul>
+        </CardContent>
+      </Card>
+
+      {/* Ingredients */}
+      <Card className="bg-white dark:bg-zinc-900 border dark:border-zinc-800">
+        <CardContent className="p-6 space-y-3">
+          <h2 className="text-xl font-semibold">Ingredients 🧁</h2>
+          <p className="text-gray-600 dark:text-gray-300">
+            {cake.ingredients || "Flour, Sugar, Butter, Eggs, Cream"}
+          </p>
         </CardContent>
       </Card>
 

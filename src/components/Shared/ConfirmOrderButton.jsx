@@ -40,7 +40,7 @@ export default function ConfirmOrderButton({ onClick }) {
 
     setTimeout(() => {
       if (typeof onClick === "function") {
-        onClick(); // ✅ SAFE CALL
+        onClick();
       }
     }, 120);
   };

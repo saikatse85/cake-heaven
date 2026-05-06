@@ -15,7 +15,7 @@ export default function BkashPaymentButton({ totalPrice }) {
       y: -2,
       duration: 0.2,
       ease: "power2.out",
-      boxShadow: "0px 12px 30px rgba(226, 62, 140, 0.35)", // bKash pink glow
+      boxShadow: "0px 12px 30px rgba(226, 62, 140, 0.35)", 
     });
   };
 
@@ -29,7 +29,7 @@ export default function BkashPaymentButton({ totalPrice }) {
     });
   };
 
-  // 👇 Click animation
+  //Click animation
   const handleClickAnim = () => {
     gsap.fromTo(
       btnRef.current,
@@ -49,7 +49,7 @@ export default function BkashPaymentButton({ totalPrice }) {
 
     const data = await res.json();
 
-    console.log("BKASH RESPONSE:", data); // 🔍 DEBUG
+    console.log("BKASH RESPONSE:", data); 
 
     if (data?.bkashURL) {
       window.location.href = data.bkashURL;
@@ -86,7 +86,7 @@ export default function BkashPaymentButton({ totalPrice }) {
       transition={{ duration: 0.5 }}
       className="relative w-full"
     >
-      {/* 💖 Glow effect (bKash style) */}
+      {/*Glow effect */}
       <div className="absolute inset-0 bg-pink-600 blur-xl opacity-25 rounded-xl pointer-events-none" />
 
       <button

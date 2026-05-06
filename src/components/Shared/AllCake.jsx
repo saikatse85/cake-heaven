@@ -43,7 +43,7 @@ export function AllCakes() {
       const flavourMatch = cake?.flavour?.toLowerCase().includes(query);
       const sizeMatch = cake?.size?.toLowerCase().includes(query);
 
-      // price search (exact or partial match)
+      // price search
       const priceMatch =
         cake?.price !== undefined &&
         (String(cake.price).includes(query) ||
@@ -68,7 +68,6 @@ export function AllCakes() {
 
   return (
     <section className="py-16 px-6 bg-white dark:bg-zinc-950 text-black dark:text-white">
-      {/* Title */}
       <motion.h2
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -101,7 +100,7 @@ export function AllCakes() {
               className="w-full bg-transparent outline-none text-sm placeholder:text-gray-500"
             />
 
-            {/* 👁️ Animated Eye */}
+            {/* Animated Eye */}
             <motion.div
               whileHover={{
                 scale: 1.3,
@@ -124,7 +123,6 @@ export function AllCakes() {
         </div>
       </motion.div>
 
-      {/* Grid (UNCHANGED) */}
       <motion.div
         initial="hidden"
         animate="visible"
@@ -185,7 +183,7 @@ export function AllCakes() {
         ))}
       </motion.div>
 
-      {/* Pagination (UNCHANGED) */}
+      {/* Pagination */}
       <div className="flex justify-center items-center gap-2 mt-10">
         <motion.button
           whileTap={{ scale: 0.9 }}

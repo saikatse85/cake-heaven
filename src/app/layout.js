@@ -35,17 +35,22 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} min-h-full flex flex-col antialiased bg-white dark:bg-background text-black dark:text-on-background font-body-md overflow-x-hidden`}>
+
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} min-h-full flex flex-col antialiased bg-white dark:bg-background text-black dark:text-on-background font-body-md overflow-x-hidden`}
+      >
         <CartProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <AuthProvider>
-            <Providers>
-              {children}
-            </Providers>
-          </AuthProvider>
-        </ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+          >
+            <AuthProvider>
+              <Providers>{children}</Providers>
+            </AuthProvider>
+          </ThemeProvider>
         </CartProvider>
-        </body>
+      </body>
     </html>
   );
 }
