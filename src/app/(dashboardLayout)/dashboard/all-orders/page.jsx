@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import OrderDetailsModal from "@/components/Shared/OrderDetailsModal";
 
 export default function AllOrders() {
   const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     fetch("/api/all-orders")
@@ -57,19 +59,14 @@ export default function AllOrders() {
           <thead className="bg-pink-200/40 dark:bg-pink-500/10 backdrop-blur-md">
             <tr>
               <th className="border p-2">Customer</th>
-              <th className="border p-2">Email</th>
+
               <th className="border p-2">Phone</th>
 
               <th className="border p-2">Cake</th>
               <th className="border p-2">Image</th>
 
-              <th className="border p-2">Size</th>
-              <th className="border p-2">Flavor</th>
-              <th className="border p-2">Message</th>
-              <th className="border p-2">Address</th>
-
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Price</th>
+
               <th className="border p-2">Total</th>
 
               <th className="border p-2">Delivery</th>
@@ -90,7 +87,7 @@ export default function AllOrders() {
                   className="text-center hover:bg-pink-200/30 dark:hover:bg-pink-500/10 transition"
                 >
                   <td className="border p-2">{order.userName}</td>
-                  <td className="border p-2">{order.userEmail}</td>
+
                   <td className="border p-2">{order.phone}</td>
 
                   <td className="border p-2">{order.cakeName}</td>
@@ -109,18 +106,7 @@ export default function AllOrders() {
                     )}
                   </td>
 
-                  <td className="border p-2">{order.size}</td>
-                  <td className="border p-2">{order.flavor}</td>
-
-                  <td className="border p-2 text-xs max-w-[120px]">
-                    {order.message}
-                  </td>
-                  <td className="border p-2 text-xs max-w-[120px]">
-                    {order.address}
-                  </td>
-
                   <td className="border p-2">{order.quantity}</td>
-                  <td className="border p-2">${order.price}</td>
 
                   <td className="border p-2 font-bold text-pink-600 dark:text-pink-400">
                     ${order.totalPrice}
@@ -157,7 +143,7 @@ export default function AllOrders() {
                   </td>
 
                   {/* UPDATE */}
-                  <td className="border p-2">
+                  <td className="border p-2 flex gap-2 justify-center">
                     <select
                       value={order.status}
                       onChange={(e) =>
@@ -176,6 +162,12 @@ export default function AllOrders() {
                       <option value="delivered">Delivered</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="px-3 py-1 bg-blue-500 text-white rounded text-xs"
+                    >
+                      Details
+                    </button>
                   </td>
                 </motion.tr>
               ))
@@ -192,6 +184,11 @@ export default function AllOrders() {
           </tbody>
         </table>
       </motion.div>
+      {/* MODAL */}
+      <OrderDetailsModal
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+      />
     </div>
   );
 }

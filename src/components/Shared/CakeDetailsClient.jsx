@@ -182,7 +182,12 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
 
           {/* Order Button */}
           <motion.div whileTap={{ scale: 0.95 }}>
-            <OrderButton cakeId={cake._id} />
+            <OrderButton
+              cakeId={cake._id}
+              size={selectedSize}
+              flavor={selectedFlavor}
+              quantity={quantity}
+            />
           </motion.div>
           {/*Add to cart*/}
           <motion.div whileTap={{ scale: 0.95 }}>

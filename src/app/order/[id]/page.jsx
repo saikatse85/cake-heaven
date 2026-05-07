@@ -16,26 +16,35 @@ export default function OrderPage() {
   const { id } = useParams();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+
+  // ✅ GET DATA FROM URL
+  const selectedSize = searchParams.get("size");
+  const selectedFlavor = searchParams.get("flavor");
+  const selectedQuantity = searchParams.get("quantity");
+
+  const redirect = searchParams.get("redirect") || "/";
+
   const [user, setUser] = useState(null);
   const [cake, setCake] = useState(null);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [size, setSize] = useState("Small");
-  const [flavor, setFlavor] = useState("Chocolate");
+  // ✅ AUTO SET SELECTED CUSTOMIZATION
+  const [size, setSize] = useState(selectedSize || "1 Pound");
+
+  const [flavor, setFlavor] = useState(selectedFlavor || "Chocolate");
+
+  const [qty, setQty] = useState(Number(selectedQuantity) || 1);
+
   const [message, setMessage] = useState("");
   const [address, setAddress] = useState("");
-  const [qty, setQty] = useState(1);
   const [date, setDate] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
 
-  // ✅ ADDED STATES
   const [design, setDesign] = useState("");
   const [referenceImage, setReferenceImage] = useState("");
-
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
 
   const cardRef = useRef(null);
 
@@ -92,6 +101,7 @@ export default function OrderPage() {
         text: "You need to login first",
         confirmButtonColor: "#ec4899",
       });
+
       router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
       return;
     }
@@ -125,11 +135,10 @@ export default function OrderPage() {
       totalPrice,
       deliveryDate: date,
       status: "pending",
-      createdAt: new Date(),
-
-      // ✅ ADDED FIELDS
+      paymentMethod,
       design,
       referenceImage,
+      createdAt: new Date(),
     };
 
     const res = await fetch("/api/orders", {
@@ -145,6 +154,7 @@ export default function OrderPage() {
         text: "Your cake order has been successfully placed!",
         confirmButtonColor: "#ec4899",
       });
+
       router.push("/dashboard/my-orders");
     } else {
       Swal.fire({
@@ -185,17 +195,18 @@ export default function OrderPage() {
             <p className="text-pink-500 font-bold">${cake.price}</p>
           </div>
 
-          {/* Selects */}
+          {/* ✅ Size Select */}
           <select
             value={size}
             onChange={(e) => setSize(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           >
-            <option>Small</option>
-            <option>Medium</option>
-            <option>Large</option>
+            <option value="1 Pound">1 Pound</option>
+            <option value="2 Pound">2 Pound</option>
+            <option value="3 Pound">3 Pound</option>
           </select>
 
+          {/* Flavor Select */}
           <select
             value={flavor}
             onChange={(e) => setFlavor(e.target.value)}
@@ -206,7 +217,7 @@ export default function OrderPage() {
             <option>Strawberry</option>
           </select>
 
-          {/* ✅ ADDED DESIGN / THEME */}
+          {/* Design */}
           <input
             placeholder="Design / Theme (e.g. Birthday, Wedding)"
             value={design}
@@ -214,7 +225,7 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* ✅ ADDED IMAGE URL (Cloudinary ready) */}
+          {/* Reference Image */}
           <input
             placeholder="Reference Image URL (Cloudinary link)"
             value={referenceImage}
@@ -246,7 +257,9 @@ export default function OrderPage() {
             >
               -
             </button>
+
             <span>{qty}</span>
+
             <button
               className="px-3 py-1 border rounded dark:border-zinc-700"
               onClick={() => setQty(qty + 1)}
@@ -263,13 +276,14 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Contact */}
+          {/* Name */}
           <input
             placeholder="Name"
             onChange={(e) => setName(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
+          {/* Phone */}
           <input
             placeholder="Phone"
             onChange={(e) => setPhone(e.target.value)}
@@ -292,11 +306,12 @@ export default function OrderPage() {
             <option value="NAGAD">Nagad</option>
           </select>
 
-          {/* Button */}
+          {/* Confirm Button */}
           <ConfirmOrderButton onClick={createOrder}>
             Confirm Order 🚀
           </ConfirmOrderButton>
 
+          {/* WhatsApp */}
           <WhatsAppOrderButton
             cake={cake}
             name={name}
@@ -310,6 +325,7 @@ export default function OrderPage() {
             message={message}
           />
 
+          {/* bKash */}
           <BkashPaymentButton totalPrice={totalPrice} />
         </div>
       </motion.div>

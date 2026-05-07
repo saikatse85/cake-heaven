@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }) {
 
         // if role missing, don't logout
         if (!roleFromDB) {
-          setUserRole("user"); // fallback
+          setUserRole("user");
           setLoading(false);
           return;
         }
@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }) {
 
         const path = window.location.pathname;
 
-        //  redirect
+        // redirect
         if (path === "/dashboard") {
           if (roleFromDB === "admin") {
             router.replace("/dashboard/admin");
@@ -56,8 +56,7 @@ export default function DashboardLayout({ children }) {
       } catch (error) {
         console.log("Role fetch error:", error);
 
-        //  DO NOT logout
-        setUserRole("user"); // fallback role
+        setUserRole("user");
         setLoading(false);
       }
     });
@@ -68,7 +67,7 @@ export default function DashboardLayout({ children }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loading></Loading>
+        <Loading />
       </div>
     );
   }
@@ -77,9 +76,7 @@ export default function DashboardLayout({ children }) {
     <div className="flex min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-100">
       {userRole === "admin" ? <AdminSidebar /> : <ClientSidebar />}
 
-      <main className="flex-1 ml-64 overflow-x-auto overflow-y-auto">
-        <div className="min-w-max">{children}</div>
-      </main>
+      <main className="flex-1 ml-64 overflow-x-hidden">{children}</main>
     </div>
   );
 }

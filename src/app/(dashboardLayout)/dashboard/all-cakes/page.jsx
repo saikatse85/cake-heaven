@@ -4,7 +4,6 @@ import React from "react";
 const ShowAllCakes = () => {
   return (
     <div>
-      {" "}
       <AllCakes />
     </div>
   );

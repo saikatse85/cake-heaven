@@ -17,20 +17,22 @@ export async function POST(req) {
       cakeName: body.cakeName,
       image: body.image,
 
-      size: body.size,
-      flavor: body.flavor,
-      message: body.message,
-      address: body.address,
+      size: body.size || "",
+      flavor: body.flavor || "",
+      message: body.message || "",
+      address: body.address || "",
 
-      quantity: body.quantity,
-      price: body.price,
-      totalPrice: body.totalPrice,
+      quantity: body.quantity || 1,
+      price: body.price || 0,
+      totalPrice: body.totalPrice || 0,
+
       paymentMethod: body.paymentMethod || "COD",
 
-      deliveryDate: body.deliveryDate,
+      deliveryDate: body.deliveryDate || "",
+
       design: body.design || "",
       referenceImage: body.referenceImage || "",
-      
+
       status: body.status || "pending",
       createdAt: new Date().toISOString(),
     };
@@ -79,7 +81,7 @@ export async function GET(req) {
 
     return Response.json(orders);
   } catch (error) {
-    console.log("🔴 API ERROR:", error);
+    console.log("API ERROR:", error);
 
     return Response.json(
       { error: "Failed to fetch orders" },

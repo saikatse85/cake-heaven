@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import Swal from "sweetalert2";
 
-export default function OrderButton({ cakeId }) {
+export default function OrderButton({ cakeId, size, flavor, quantity }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const btnRef = useRef(null);
@@ -56,6 +56,12 @@ export default function OrderButton({ cakeId }) {
   const handleOrder = () => {
     handleClickAnim();
 
+    const query = new URLSearchParams({
+      size: size || "",
+      flavor: flavor || "",
+      quantity: quantity || 1,
+    }).toString();
+
     setTimeout(() => {
       if (!user) {
         Swal.fire({
@@ -64,9 +70,10 @@ export default function OrderButton({ cakeId }) {
           text: "For order you need to login first",
           confirmButtonText: "OK",
         });
-        router.push(`/login?redirect=/order/${cakeId}`);
+
+        router.push(`/login?redirect=/order/${cakeId}?${query}`);
       } else {
-        router.push(`/order/${cakeId}`);
+        router.push(`/order/${cakeId}?${query}`);
       }
     }, 150);
   };
