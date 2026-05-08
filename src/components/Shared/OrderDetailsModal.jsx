@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import ReviewModal from "@/components/ReviewModal";
+import ReviewModal from "./ReviewModal";
 
 export default function OrderDetailsModal({ order, onClose }) {
   const [openReview, setOpenReview] = useState(false);
