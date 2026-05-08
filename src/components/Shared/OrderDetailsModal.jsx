@@ -1,9 +1,22 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import ReviewModal from "@/components/ReviewModal";
 
 export default function OrderDetailsModal({ order, onClose }) {
+  const [openReview, setOpenReview] = useState(false);
+
   if (!order) return null;
+
+  // TRACKING STEPS
+  const steps = [
+    "pending",
+    "confirmed",
+    "processing",
+    "out_for_delivery",
+    "delivered",
+  ];
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
@@ -47,7 +60,6 @@ export default function OrderDetailsModal({ order, onClose }) {
             flex-wrap: wrap;
           }
 
-          /* ✅ SIGNATURE SECTION */
           .signature {
             margin-top: 40px;
             display: flex;
@@ -118,10 +130,8 @@ export default function OrderDetailsModal({ order, onClose }) {
 
           <hr />
 
-          <!-- ✅ SIGNATURE SECTION -->
           <div class="signature">
-            
-            <!-- CUSTOMER -->
+
             <div class="sig-box">
               <div class="line"></div>
               <div class="label">Customer Signature</div>
@@ -130,7 +140,6 @@ export default function OrderDetailsModal({ order, onClose }) {
               </p>
             </div>
 
-            <!-- SELLER -->
             <div class="sig-box">
               <div class="line"></div>
               <div class="label">Seller Signature</div>
@@ -198,12 +207,15 @@ export default function OrderDetailsModal({ order, onClose }) {
             <p>
               <b>Cake:</b> {order.cakeName}
             </p>
+
             <p>
               <b>User:</b> {order.userName}
             </p>
+
             <p>
               <b>Phone:</b> {order.phone}
             </p>
+
             <p>
               <b>Email:</b> {order.userEmail}
             </p>
@@ -211,6 +223,7 @@ export default function OrderDetailsModal({ order, onClose }) {
             <p>
               <b>Size:</b> {order.size}
             </p>
+
             <p>
               <b>Flavor:</b> {order.flavor}
             </p>
@@ -218,6 +231,7 @@ export default function OrderDetailsModal({ order, onClose }) {
             <p>
               <b>Qty:</b> {order.quantity}
             </p>
+
             <p>
               <b>Price:</b> ${order.price}
             </p>
@@ -225,6 +239,7 @@ export default function OrderDetailsModal({ order, onClose }) {
             <p>
               <b>Total:</b> ${order.totalPrice}
             </p>
+
             <p>
               <b>Payment:</b> {order.paymentMethod}
             </p>
@@ -232,9 +247,41 @@ export default function OrderDetailsModal({ order, onClose }) {
             <p>
               <b>Delivery:</b> {order.deliveryDate}
             </p>
+
             <p>
               <b>Status:</b> {order.status}
             </p>
+          </div>
+
+          {/* ORDER TRACKING BAR */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-pink-500">Order Tracking</h3>
+
+            <div className="flex flex-wrap gap-2">
+              {steps.map((step, index) => {
+                const active = steps.indexOf(order.status) >= index;
+
+                return (
+                  <motion.div
+                    key={step}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`
+                      px-3 py-1 rounded-full text-xs font-semibold
+                      transition-all duration-300 shadow
+                      ${
+                        active
+                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+                          : "bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-gray-300"
+                      }
+                    `}
+                  >
+                    {step.replaceAll("_", " ")}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
           {/* EXTRA */}
@@ -254,7 +301,61 @@ export default function OrderDetailsModal({ order, onClose }) {
             <b>Reference:</b> {order.referenceImage || "N/A"}
           </p>
 
-          {/* ✅ PRINT BUTTON (BOTTOM LEFT) */}
+          {/* TRACKING TIMELINE */}
+          <div className="mt-4 space-y-3">
+            <h3 className="text-sm font-bold text-pink-500">
+              Tracking Timeline
+            </h3>
+
+            {order?.trackingHistory?.length > 0 ? (
+              order.trackingHistory.map((track, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="
+                    border-l-4 border-pink-500
+                    pl-4 py-2
+                    bg-white/10 dark:bg-zinc-800/30
+                    rounded-r-xl
+                  "
+                >
+                  <p className="font-semibold capitalize text-sm">
+                    {track.status.replaceAll("_", " ")}
+                  </p>
+
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    {track.message}
+                  </p>
+
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    {new Date(track.time).toLocaleString()}
+                  </p>
+                </motion.div>
+              ))
+            ) : (
+              <p className="text-xs text-gray-400">No tracking updates yet</p>
+            )}
+          </div>
+
+          {/* REVIEW BUTTON AFTER DELIVERY */}
+          {order.status === "delivered" && !order.reviewed && (
+            <button
+              onClick={() => setOpenReview(true)}
+              className="
+                absolute bottom-4 right-4
+                px-4 py-2
+                bg-gradient-to-r from-yellow-400 to-orange-500
+                text-white text-sm rounded-xl
+                shadow-lg hover:scale-105 transition
+              "
+            >
+              ⭐ Share Review
+            </button>
+          )}
+
+          {/* PRINT BUTTON */}
           <button
             onClick={handlePrint}
             className="
@@ -267,6 +368,17 @@ export default function OrderDetailsModal({ order, onClose }) {
           >
             🖨 Print Voucher
           </button>
+
+          {/* REVIEW MODAL */}
+          <ReviewModal
+            isOpen={openReview}
+            onClose={() => setOpenReview(false)}
+            cake={{
+              _id: order.cakeId,
+              name: order.cakeName,
+              image: order.image,
+            }}
+          />
         </motion.div>
       </div>
     </AnimatePresence>

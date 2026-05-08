@@ -134,7 +134,19 @@ export default function OrderPage() {
       price: cake.price,
       totalPrice,
       deliveryDate: date,
+
+      //ORDER STATUS
       status: "pending",
+
+      // TRACKING HISTORY
+      trackingHistory: [
+        {
+          status: "pending",
+          message: "Order placed successfully",
+          time: new Date(),
+        },
+      ],
+
       paymentMethod,
       design,
       referenceImage,

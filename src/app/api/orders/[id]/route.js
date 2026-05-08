@@ -4,15 +4,29 @@ import { ObjectId } from "mongodb";
 
 export async function PATCH(req, { params }) {
   try {
-    const { id } =await params;
-    const { status } = await req.json();
+    const { id } = await params;
+
+    const { status, message } = await req.json();
 
     const client = await clientPromise;
     const db = client.db("cake-heaven");
 
     const result = await db.collection("orders").updateOne(
-      { _id: new ObjectId(id) }, // ✅ must match ObjectId
-      { $set: { status } }
+      { _id: new ObjectId(id) },
+
+      {
+        $set: {
+          status,
+        },
+
+        $push: {
+          trackingHistory: {
+            status,
+            message,
+            time: new Date(),
+          },
+        },
+      }
     );
 
     return Response.json({
