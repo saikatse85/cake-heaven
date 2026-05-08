@@ -13,7 +13,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
 
-  // ☁️ CLOUDINARY UPLOAD (FIXED FOR VERCEL)
+  //CLOUDINARY UPLOAD
   const handleImageUpload = async (file) => {
     const formDataUpload = new FormData();
     formDataUpload.append("file", file);
@@ -21,7 +21,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
     try {
       const res = await fetch("/api/upload", {
         method: "POST",
-        body: formDataUpload, // ✅ FIX: multipart/form-data
+        body: formDataUpload,
       });
 
       const data = await res.json();
@@ -125,7 +125,7 @@ export default function ReviewModal({ isOpen, onClose, cake }) {
 
               <p className="text-center text-sm text-gray-500">{cake.name}</p>
 
-              {/* ⭐ RATING */}
+              {/* RATING */}
               <div className="flex justify-center gap-2 text-2xl">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
