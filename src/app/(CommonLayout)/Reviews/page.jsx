@@ -11,7 +11,7 @@ export default function Reviews() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch("/api/reviews");
+        const res = await fetch("/api/reviews?status=approved");
         const data = await res.json();
         setReviews(data);
       } catch (err) {

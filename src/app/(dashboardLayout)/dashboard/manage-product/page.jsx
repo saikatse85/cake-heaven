@@ -10,11 +10,17 @@ import Swal from "sweetalert2";
 export default function ManageProduct() {
   const [cakes, setCakes] = useState([]);
 
+  // pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 6;
+
   // Load data
   useEffect(() => {
     fetch("/api/cakes")
       .then((res) => res.json())
-      .then((data) => setCakes(data));
+      .then((data) => {
+        setCakes(Array.isArray(data) ? data : data?.cakes || []);
+      });
   }, []);
 
   // Delete handler
@@ -54,6 +60,11 @@ export default function ManageProduct() {
     }
   };
 
+  // pagination logic
+  const totalPages = Math.ceil(cakes.length / perPage);
+  const startIndex = (currentPage - 1) * perPage;
+  const paginatedCakes = cakes.slice(startIndex, startIndex + perPage);
+
   return (
     <div
       className="p-4 space-y-6 min-h-screen 
@@ -75,7 +86,7 @@ export default function ManageProduct() {
 
       {/* Grid */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {cakes.map((cake, index) => (
+        {paginatedCakes.map((cake, index) => (
           <motion.div
             key={cake._id}
             initial={{ opacity: 0, y: 20 }}
@@ -143,6 +154,39 @@ export default function ManageProduct() {
             </Card>
           </motion.div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center gap-2 mt-6">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-3 py-1 bg-pink-500 text-white rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+          <button
+            key={num}
+            onClick={() => setCurrentPage(num)}
+            className={`px-3 py-1 rounded ${
+              currentPage === num
+                ? "bg-pink-600 text-white"
+                : "bg-white dark:bg-zinc-800"
+            }`}
+          >
+            {num}
+          </button>
+        ))}
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-3 py-1 bg-pink-500 text-white rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

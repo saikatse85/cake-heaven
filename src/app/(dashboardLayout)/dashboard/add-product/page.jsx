@@ -174,58 +174,73 @@ export default function AddCakePage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              placeholder="Cake Name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Cake Name</label>
+              <Input
+                placeholder="Cake Name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
+                required
+              />
+            </div>
 
-            <Input
-              placeholder="Category (e.g. Birthday)"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Cake Category</label>
+              <Input
+                placeholder="Category (e.g. Birthday)"
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+                className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
+                required
+              />
+            </div>
 
-            <Input
-              type="number"
-              placeholder="Price"
-              value={formData.price}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
-              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Price</label>
+              <Input
+                type="number"
+                placeholder="Price"
+                value={formData.price}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
+                className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
+                required
+              />
+            </div>
 
-            <Input
-              type="number"
-              step="0.1"
-              placeholder="Rating (e.g. 4.5)"
-              value={formData.rating}
-              onChange={(e) =>
-                setFormData({ ...formData, rating: e.target.value })
-              }
-              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Rating</label>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="Rating (e.g. 4.5)"
+                value={formData.rating}
+                onChange={(e) =>
+                  setFormData({ ...formData, rating: e.target.value })
+                }
+                className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
+                required
+              />
+            </div>
 
-            <Textarea
-              placeholder="Description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
-              required
-            />
+            <div className="space-y-1">
+              <label className="test-sm font-medium">Description</label>
+              <Textarea
+                placeholder="Description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
+                required
+              />
+            </div>
 
             {/* Image Upload */}
             <Input

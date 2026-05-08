@@ -27,13 +27,13 @@ export default function ClientSidebar() {
       {/* Logo */}
       <Link href="/" className="flex items-center justify-center gap-2">
         <Image
-          src="/asset/img/logo.png"
+          src="/logo.png"
           alt="Cake Heaven Logo"
           width={50}
           height={50}
           priority
         />
-        <h2 className="text-xl font-bold text-pink-500">Cake Heaven</h2>
+        <h2 className="text-xl font-bold text-pink-500">Desert Heaven</h2>
       </Link>
 
       {/* Title */}

@@ -41,7 +41,7 @@ export function FeaturedCakes() {
         viewport={{ once: true }}
         className="text-3xl font-bold text-center mb-10"
       >
-        Featured Cakes
+        Featured Desert
       </motion.h2>
 
       {/* Grid with stagger */}

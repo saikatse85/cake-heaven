@@ -53,8 +53,6 @@ export default function Navbar() {
         const res = await fetch(`/api/users/${currentUser.uid}`);
         const data = await res.json();
 
-        console.log(data);
-
         // SAFE CHECK
         if (res.ok && data && !data.success) {
           setDbUser(data);
@@ -127,7 +125,7 @@ export default function Navbar() {
         {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-6 dark:text-white">
           <NavItem href="/">Home</NavItem>
-          <NavItem href="/cakes">Cakes</NavItem>
+          <NavItem href="/cakes">Desert</NavItem>
           <NavItem href="/about">About</NavItem>
           <NavItem href="/contact">Contact</NavItem>
         </div>
@@ -286,6 +284,11 @@ export default function Navbar() {
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard/manage-product">
                         Manage Products
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/manage-reviews">
+                        Manage Reviews
                       </Link>
                     </DropdownMenuItem>
                   </>

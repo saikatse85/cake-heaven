@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import Loading from "@/app/loading";
 import WhatsAppOrderButton from "@/components/Shared/WhatsAppOrderButton";
 import BkashPaymentButton from "@/components/Shared/BikashPaymentButton";
+import { useDiscount } from "@/context/DiscountContext";
 
 export default function OrderPage() {
   const { id } = useParams();
@@ -18,7 +19,6 @@ export default function OrderPage() {
 
   const searchParams = useSearchParams();
 
-  // ✅ GET DATA FROM URL
   const selectedSize = searchParams.get("size");
   const selectedFlavor = searchParams.get("flavor");
   const selectedQuantity = searchParams.get("quantity");
@@ -31,11 +31,8 @@ export default function OrderPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
-  // ✅ AUTO SET SELECTED CUSTOMIZATION
   const [size, setSize] = useState(selectedSize || "1 Pound");
-
   const [flavor, setFlavor] = useState(selectedFlavor || "Chocolate");
-
   const [qty, setQty] = useState(Number(selectedQuantity) || 1);
 
   const [message, setMessage] = useState("");
@@ -48,17 +45,25 @@ export default function OrderPage() {
 
   const cardRef = useRef(null);
 
+  // DISCOUNT CONTEXT
+  const { discount, setDiscount } = useDiscount();
+
+  const [showDiscount, setShowDiscount] = useState(false);
+
+  // AUTH USER
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsubscribe();
   }, []);
 
+  // FETCH CAKE
   useEffect(() => {
     fetch(`/api/cakes/${id}`)
       .then((res) => res.json())
       .then((data) => setCake(data));
   }, [id]);
 
+  // ANIMATION
   useEffect(() => {
     if (cardRef.current) {
       gsap.fromTo(
@@ -69,8 +74,35 @@ export default function OrderPage() {
     }
   }, [cake]);
 
-  const totalPrice = cake ? cake.price * qty : 0;
+  //FIRST ORDER DISCOUNT CHECK
+  useEffect(() => {
+    const checkFirstOrder = async () => {
+      if (!user?.email) return;
 
+      try {
+        const res = await fetch(`/api/orders/check-first?email=${user.email}`);
+        const data = await res.json();
+
+        if (data.isFirstOrder) {
+          setDiscount(20);
+          setShowDiscount(true);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    checkFirstOrder();
+  }, [user, setDiscount]);
+
+  // PRICE CALCULATION
+  const basePrice = cake ? cake.price * qty : 0;
+
+  const totalPrice = discount
+    ? basePrice - (basePrice * discount) / 100
+    : basePrice;
+
+  // CREATE ORDER
   const createOrder = async () => {
     if (!name || !phone || !date) {
       Swal.fire({
@@ -92,9 +124,9 @@ export default function OrderPage() {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const userData = JSON.parse(localStorage.getItem("user"));
 
-    if (!user) {
+    if (!userData) {
       Swal.fire({
         icon: "info",
         title: "Login Required",
@@ -120,7 +152,7 @@ export default function OrderPage() {
     if (!confirm.isConfirmed) return;
 
     const orderData = {
-      userEmail: user.email,
+      userEmail: userData.email,
       userName: name,
       phone,
       cakeId: cake._id,
@@ -134,11 +166,7 @@ export default function OrderPage() {
       price: cake.price,
       totalPrice,
       deliveryDate: date,
-
-      //ORDER STATUS
       status: "pending",
-
-      // TRACKING HISTORY
       trackingHistory: [
         {
           status: "pending",
@@ -146,7 +174,6 @@ export default function OrderPage() {
           time: new Date(),
         },
       ],
-
       paymentMethod,
       design,
       referenceImage,
@@ -188,7 +215,6 @@ export default function OrderPage() {
     <div className="min-h-screen flex items-center justify-center px-6 bg-white dark:bg-zinc-950 text-black dark:text-white">
       <motion.div ref={cardRef} className="w-full max-w-xl">
         <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 p-8 rounded-2xl space-y-5">
-          {/* 🍰 Cake Image */}
           {cake?.image ? (
             <img
               src={cake.image}
@@ -201,13 +227,11 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* Name + Price */}
           <div className="flex justify-between">
             <h2 className="text-xl font-bold">{cake.name}</h2>
             <p className="text-pink-500 font-bold">${cake.price}</p>
           </div>
 
-          {/* ✅ Size Select */}
           <select
             value={size}
             onChange={(e) => setSize(e.target.value)}
@@ -218,7 +242,6 @@ export default function OrderPage() {
             <option value="3 Pound">3 Pound</option>
           </select>
 
-          {/* Flavor Select */}
           <select
             value={flavor}
             onChange={(e) => setFlavor(e.target.value)}
@@ -229,7 +252,6 @@ export default function OrderPage() {
             <option>Strawberry</option>
           </select>
 
-          {/* Design */}
           <input
             placeholder="Design / Theme (e.g. Birthday, Wedding)"
             value={design}
@@ -237,7 +259,6 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Reference Image */}
           <input
             placeholder="Reference Image URL (Cloudinary link)"
             value={referenceImage}
@@ -245,7 +266,6 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Message */}
           <textarea
             placeholder="Custom message on cake"
             value={message}
@@ -253,7 +273,6 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Address */}
           <textarea
             placeholder="Customer Address"
             value={address}
@@ -261,7 +280,6 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Quantity */}
           <div className="flex items-center gap-3">
             <button
               className="px-3 py-1 border rounded dark:border-zinc-700"
@@ -269,9 +287,7 @@ export default function OrderPage() {
             >
               -
             </button>
-
             <span>{qty}</span>
-
             <button
               className="px-3 py-1 border rounded dark:border-zinc-700"
               onClick={() => setQty(qty + 1)}
@@ -280,7 +296,6 @@ export default function OrderPage() {
             </button>
           </div>
 
-          {/* Date */}
           <input
             type="date"
             value={date}
@@ -288,26 +303,22 @@ export default function OrderPage() {
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Name */}
           <input
             placeholder="Name"
             onChange={(e) => setName(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Phone */}
           <input
             placeholder="Phone"
             onChange={(e) => setPhone(e.target.value)}
             className="w-full p-2 rounded border bg-white dark:bg-zinc-800 dark:border-zinc-700"
           />
 
-          {/* Total */}
           <div className="text-lg font-bold text-pink-500">
             Total: ${totalPrice}
           </div>
 
-          {/* Payment */}
           <select
             value={paymentMethod}
             onChange={(e) => setPaymentMethod(e.target.value)}
@@ -318,12 +329,10 @@ export default function OrderPage() {
             <option value="NAGAD">Nagad</option>
           </select>
 
-          {/* Confirm Button */}
           <ConfirmOrderButton onClick={createOrder}>
             Confirm Order 🚀
           </ConfirmOrderButton>
 
-          {/* WhatsApp */}
           <WhatsAppOrderButton
             cake={cake}
             name={name}
@@ -337,10 +346,33 @@ export default function OrderPage() {
             message={message}
           />
 
-          {/* bKash */}
           <BkashPaymentButton totalPrice={totalPrice} />
         </div>
       </motion.div>
+
+      {/* DISCOUNT MODAL */}
+      {showDiscount && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white/10 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 p-6 rounded-2xl text-center text-white w-[90%] max-w-md"
+          >
+            <h2 className="text-2xl font-bold mb-2">🎉 Welcome Gift!</h2>
+
+            <p className="mb-4">
+              You got <b>20% OFF</b> on your first order!
+            </p>
+
+            <button
+              onClick={() => setShowDiscount(false)}
+              className="px-4 py-2 bg-pink-500 rounded-lg"
+            >
+              Got it
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

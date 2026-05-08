@@ -76,7 +76,16 @@ export default function DashboardLayout({ children }) {
     <div className="flex min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-100">
       {userRole === "admin" ? <AdminSidebar /> : <ClientSidebar />}
 
-      <main className="flex-1 ml-64 overflow-x-hidden">{children}</main>
+      <main
+        className="
+  flex-1 ml-64 overflow-x-hidden
+  bg-pink-50/40 dark:bg-zinc-900
+  text-black dark:text-white backdrop-blur-xl
+  transition-all duration-300
+"
+      >
+        {children}
+      </main>
     </div>
   );
 }

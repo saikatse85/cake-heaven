@@ -33,29 +33,33 @@ export async function PUT(req, { params }) {
     const client = await clientPromise;
     const db = client.db("cake-heaven");
 
+    const updateData = {
+      name: body.name,
+      category: body.category,
+      price: Number(body.price),
+      rating: Number(body.rating),
+      description: body.description,
+      available: body.available,
+    };
+    if (body.image && body.image !== "") {
+  updateData.image = body.image;
+}
+
     const result = await db.collection("cakes").updateOne(
       { _id: new ObjectId(id) },
-      {
-        $set: {
-          name: body.name,
-          category: body.category,
-          price: Number(body.price),
-          rating: Number(body.rating),
-          description: body.description,
-          image: body.image,
-          available: body.available,
-        },
-      }
+      { $set: updateData }
     );
 
     return Response.json({
-      message: "Updated",
-      matchedCount: result.matchedCount,
-      modifiedCount: result.modifiedCount,
+      success: true,
+      message: "Cake updated successfully",
+      result,
     });
   } catch (error) {
-    console.error("UPDATE ERROR:", error);
-    return Response.json({ error: "Update failed" }, { status: 500 });
+    return Response.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
 

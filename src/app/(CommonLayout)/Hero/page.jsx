@@ -118,7 +118,7 @@ export default function Hero() {
               transition={{ duration: 0.6 }}
               className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight"
             >
-              Freshly Baked <span className="text-pink-500">Cakes</span> for
+              Freshly Baked <span className="text-pink-500">Desert</span> for
               Every Moment
             </motion.h1>
 
@@ -129,7 +129,7 @@ export default function Hero() {
               transition={{ delay: 0.3 }}
               className="text-gray-600 dark:text-gray-300 text-lg md:text-xl"
             >
-              Delicious custom cakes made with love. Perfect for birthdays,
+              Delicious custom Desert made with love. Perfect for birthdays,
               weddings, and special celebrations.
             </motion.p>
 

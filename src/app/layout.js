@@ -4,6 +4,7 @@ import Providers from "@/lib/providers";
 import AuthProvider from "@/context/AuthContext";
 import { ThemeProvider } from "@/lib/providers/ThemeProvider";
 import { CartProvider } from "@/context/CartContext";
+import { DiscountProvider } from "@/context/DiscountContext";
 
 
 const inter = Inter({
@@ -39,7 +40,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} min-h-full flex flex-col antialiased bg-white dark:bg-background text-black dark:text-on-background font-body-md overflow-x-hidden`}
       >
-        <CartProvider>
+        <DiscountProvider>
+          <CartProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -50,6 +52,7 @@ export default function RootLayout({ children }) {
             </AuthProvider>
           </ThemeProvider>
         </CartProvider>
+        </DiscountProvider>
       </body>
     </html>
   );

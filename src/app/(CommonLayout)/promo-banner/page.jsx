@@ -1,12 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+
 import Link from "next/link";
+import { useState } from "react";
+import PromoModal from "@/components/Shared/PromoModal";
+import { Button } from "@/components/ui/button";
 
 export default function PromoBanner() {
+  const [open, setOpen] = useState(false);
+
   return (
     <section className="py-6 px-6">
+      <PromoModal open={open} onClose={() => setOpen(false)} />
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -39,20 +45,19 @@ export default function PromoBanner() {
           viewport={{ once: true }}
           className="text-white/90 relative z-10"
         >
-          Celebrate your moments with delicious handmade cakes.
+          Celebrate your moments with delicious handmade Desert.
         </motion.p>
 
-        <Link href={"/cakes"}>
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="relative z-10 inline-block"
-          >
-            <Button className="bg-white text-pink-600 hover:bg-gray-100">
-              Order Now
-            </Button>
-          </motion.div>
-        </Link>
+        <motion.div
+          onClick={() => setOpen(true)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="relative z-10 inline-block"
+        >
+          <Button className="bg-white text-pink-600 hover:bg-gray-100">
+            Order Now
+          </Button>
+        </motion.div>
       </motion.div>
     </section>
   );

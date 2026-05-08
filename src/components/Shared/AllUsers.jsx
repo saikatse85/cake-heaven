@@ -9,6 +9,10 @@ export default function AllUsers({ users }) {
   const [localUsers, setLocalUsers] = useState(users);
   const tableRef = useRef();
 
+  // pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+
   // Role Change
   const handleRoleChange = async (uid, role) => {
     const updatedUsers = localUsers.map((user) =>
@@ -17,7 +21,6 @@ export default function AllUsers({ users }) {
 
     setLocalUsers(updatedUsers);
 
-    // API call
     const res = await fetch("/api/users/update", {
       method: "PATCH",
       headers: {
@@ -37,8 +40,6 @@ export default function AllUsers({ users }) {
         showConfirmButton: false,
       });
     } else {
-      console.error("Update failed");
-
       setLocalUsers(users);
 
       Swal.fire({
@@ -65,7 +66,6 @@ export default function AllUsers({ users }) {
 
     const previousUsers = [...localUsers];
 
-    // instant UI update
     setLocalUsers(localUsers.filter((user) => user.uid !== uid));
 
     try {
@@ -79,33 +79,11 @@ export default function AllUsers({ users }) {
 
       const data = await res.json();
 
-      if (data.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Deleted",
-          text: "User deleted successfully",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      } else {
+      if (!data.success) {
         setLocalUsers(previousUsers);
-
-        Swal.fire({
-          icon: "error",
-          title: "Delete Failed",
-          text: "Could not delete user",
-        });
       }
     } catch (error) {
-      console.error(error);
-
       setLocalUsers(previousUsers);
-
-      Swal.fire({
-        icon: "error",
-        title: "Server Error",
-        text: "Something went wrong",
-      });
     }
   };
 
@@ -118,7 +96,7 @@ export default function AllUsers({ users }) {
     setLocalUsers(updatedUsers);
 
     try {
-      const res = await fetch("/api/users/update", {
+      await fetch("/api/users/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -128,38 +106,12 @@ export default function AllUsers({ users }) {
           blocked: !blocked,
         }),
       });
-
-      const data = await res.json();
-
-      if (data.success) {
-        Swal.fire({
-          icon: "success",
-          title: !blocked ? "User Blocked" : "User Unblocked",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      } else {
-        setLocalUsers(users);
-
-        Swal.fire({
-          icon: "error",
-          title: "Action Failed",
-          text: "Could not update block status",
-        });
-      }
     } catch (error) {
-      console.error(error);
-
       setLocalUsers(users);
-
-      Swal.fire({
-        icon: "error",
-        title: "Server Error",
-        text: "Something went wrong",
-      });
     }
   };
 
+  // GSAP animation
   useEffect(() => {
     const rows = tableRef.current.querySelectorAll("tbody tr");
 
@@ -176,6 +128,12 @@ export default function AllUsers({ users }) {
     );
   }, [localUsers]);
 
+  // pagination logic
+  const totalPages = Math.ceil(localUsers.length / perPage);
+
+  const startIndex = (currentPage - 1) * perPage;
+  const paginatedUsers = localUsers.slice(startIndex, startIndex + perPage);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -184,6 +142,24 @@ export default function AllUsers({ users }) {
       className="p-6 text-gray-900 dark:text-gray-100"
     >
       <h1 className="text-3xl font-bold mb-5">All User 👤</h1>
+
+      {/* PAGE SIZE SELECTOR */}
+      <div className="mb-4 flex items-center gap-2">
+        <span className="text-sm">Show:</span>
+
+        <select
+          value={perPage}
+          onChange={(e) => {
+            setPerPage(Number(e.target.value));
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg px-2 py-1 text-sm"
+        >
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={30}>30</option>
+        </select>
+      </div>
 
       <div
         className="overflow-x-auto rounded-2xl shadow-xl
@@ -194,10 +170,7 @@ export default function AllUsers({ users }) {
           className="min-w-full text-sm text-left
           text-gray-800 dark:text-gray-200"
         >
-          <thead
-            className="bg-pink-500 text-white uppercase text-xs
-            tracking-wider"
-          >
+          <thead className="bg-pink-500 text-white uppercase text-xs tracking-wider">
             <tr>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Email</th>
@@ -209,7 +182,7 @@ export default function AllUsers({ users }) {
           </thead>
 
           <tbody>
-            {localUsers.map((user) => (
+            {paginatedUsers.map((user) => (
               <tr
                 key={user._id}
                 className="border-b
@@ -223,67 +196,67 @@ export default function AllUsers({ users }) {
 
                 <td className="px-6 py-4">{user.email}</td>
 
-                <td className="px-6 py-4 capitalize">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold
-                    ${
-                      user.role === "admin"
-                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                        : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                </td>
+                <td className="px-6 py-4 capitalize">{user.role}</td>
 
-                {/* Assign Role */}
                 <td className="px-6 py-4">
                   <select
                     value={user.role}
                     onChange={(e) => handleRoleChange(user.uid, e.target.value)}
-                    className="border rounded-lg px-3 py-1.5 text-xs
-                    bg-white dark:bg-gray-800
-                    text-gray-900 dark:text-gray-100
-                    border-gray-300 dark:border-gray-600
-                    outline-none focus:ring-2 focus:ring-pink-400"
+                    className="border rounded-lg px-3 py-1.5 text-xs"
                   >
                     <option value="client">Client</option>
                     <option value="admin">Admin</option>
                   </select>
                 </td>
 
-                {/* Actions */}
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleBlock(user.uid, user.blocked)}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition
-                      ${
-                        user.blocked
-                          ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                          : "bg-gray-700 hover:bg-gray-800 text-white"
-                      }`}
-                    >
-                      {user.blocked ? "Unblock" : "Block"}
-                    </button>
+                  <button onClick={() => handleBlock(user.uid, user.blocked)}>
+                    {user.blocked ? "Unblock" : "Block"}
+                  </button>
 
-                    <button
-                      onClick={() => handleDelete(user.uid)}
-                      className="px-3 py-1 rounded-lg text-xs font-medium
-                      bg-red-500 hover:bg-red-600 text-white transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
+                  <button onClick={() => handleDelete(user.uid)}>Delete</button>
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4">
                   {new Date(user.createdAt).toLocaleString()}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* PAGINATION */}
+      <div className="flex justify-center gap-2 mt-4 flex-wrap">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-3 py-1 bg-pink-500 text-white rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+          <button
+            key={num}
+            onClick={() => setCurrentPage(num)}
+            className={`px-3 py-1 rounded ${
+              currentPage === num
+                ? "bg-pink-600 text-white"
+                : "bg-white dark:bg-zinc-800"
+            }`}
+          >
+            {num}
+          </button>
+        ))}
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-3 py-1 bg-pink-500 text-white rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </motion.div>
   );

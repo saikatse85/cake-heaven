@@ -75,7 +75,7 @@ export function AllCakes() {
         transition={{ duration: 0.6 }}
         className="text-3xl font-bold text-center mb-6"
       >
-        All Featured Cakes
+        All Featured Desert
       </motion.h2>
 
       {/* Search Component */}

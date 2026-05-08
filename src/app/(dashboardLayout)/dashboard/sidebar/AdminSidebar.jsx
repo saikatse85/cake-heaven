@@ -26,13 +26,13 @@ export default function AdminSidebar() {
     <div className="w-64 h-screen bg-pink-50 dark:bg-zinc-950 text-gray-700 dark:text-gray-300 p-5 flex flex-col overflow-y-auto fixed top-0 left-0 border-r border-pink-100 dark:border-zinc-800">
       <Link href="/" className="flex items-center justify-center gap-2">
         <Image
-          src="/asset/img/logo.png"
+          src="/logo.png"
           alt="Cake Heaven Logo"
           width={50}
           height={50}
           priority
         />
-        <h2 className="text-xl font-bold text-pink-500">Cake Heaven</h2>
+        <h2 className="text-xl font-bold text-pink-500">Desert Heaven</h2>
       </Link>
 
       {/* TOP MENU AREA */}
@@ -123,19 +123,13 @@ export default function AdminSidebar() {
           {openMenu === "review" && (
             <div className="ml-4 space-y-1 mt-2 text-sm">
               <Link
-                href="/dashboard/reviews"
+                href="/dashboard/manage-reviews"
                 className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
-                ⭐ View Reviews
+                ⭐ Manage Reviews
               </Link>
               <Link
-                href="/admin/reviews/approve"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                Approve/Delete Reviews
-              </Link>
-              <Link
-                href="/admin/reviews/spam"
+                href="/dashboard/spam-reviews"
                 className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 🚨 Spam Detection
@@ -144,37 +138,8 @@ export default function AdminSidebar() {
           )}
         </div>
 
-        {/* CATEGORY MANAGEMENT */}
+        {/* Profile */}
         <div>
-          <button
-            onClick={() => toggleMenu("category")}
-            className="w-full text-left p-2 rounded hover:bg-pink-500 hover:text-white dark:hover:bg-pink-600 transition"
-          >
-            📁 Category Management
-          </button>
-
-          {openMenu === "category" && (
-            <div className="ml-4 space-y-1 mt-2 text-sm">
-              <Link
-                href="/admin/categories"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                📂 View Categories
-              </Link>
-              <Link
-                href="/admin/categories/add"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                ➕ Add Category
-              </Link>
-              <Link
-                href="/admin/categories/edit"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                ✏️ Edit/Delete Category
-              </Link>
-            </div>
-          )}
           <div>
             <button
               onClick={() => toggleMenu("profile")}

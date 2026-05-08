@@ -50,7 +50,6 @@ export default function RegisterPage() {
     setError("");
     setFormError("");
 
-    // ✅ VALIDATION
     if (!name || !phone || !password || !confirmPassword || !image) {
       setFormError("All required fields must be filled");
       return;
@@ -66,7 +65,6 @@ export default function RegisterPage() {
       return;
     }
 
-    // 🔐 NEW PASSWORD RULE CHECK
     if (!isStrongPassword(password)) {
       setFormError(
         "Password must be 6+ chars, include uppercase, lowercase, number & special character",
@@ -82,13 +80,11 @@ export default function RegisterPage() {
     try {
       setLoading(true);
 
-      // Upload image
       let imageUrl = "";
       if (image) {
         imageUrl = await uploadImageToCloudinary(image);
       }
 
-      // Firebase Auth
       const loginEmail =
         email?.trim() !== "" ? email : `${phone}@cake-heaven.local`;
 
@@ -100,13 +96,11 @@ export default function RegisterPage() {
 
       const user = userCredential.user;
 
-      // Update Firebase profile
       await updateProfile(user, {
         displayName: name,
         photoURL: imageUrl,
       });
 
-      // Save MongoDB
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -128,12 +122,14 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        console.log("REGISTER ERROR:", data);
         setError(data.message || "Failed to save user");
         return;
       }
 
-      // AUTO LOGIN
+      // ✅ FIX ADDED HERE
+      const finalEmail =
+        email?.trim() !== "" ? email : `${phone}@cake-heaven.local`;
+
       const userData = {
         uid: user.uid,
         name: name || user.displayName,
@@ -162,7 +158,6 @@ export default function RegisterPage() {
     }
   };
 
-  // GOOGLE REGISTER
   const handleGoogleRegister = async () => {
     const provider = new GoogleAuthProvider();
 
@@ -170,7 +165,7 @@ export default function RegisterPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const res = await fetch("/api/users", {
+      await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -188,12 +183,6 @@ export default function RegisterPage() {
         }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        console.log("GOOGLE REGISTER ERROR:", data);
-      }
-
       const userData = {
         uid: user.uid,
         name: user.displayName,
@@ -205,6 +194,16 @@ export default function RegisterPage() {
 
       localStorage.setItem("user", JSON.stringify(userData));
       window.dispatchEvent(new Event("storage"));
+
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: finalEmail,
+        }),
+      });
 
       Swal.fire({
         icon: "success",
@@ -290,7 +289,6 @@ export default function RegisterPage() {
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
-
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-2.5 cursor-pointer text-gray-500"
@@ -305,7 +303,6 @@ export default function RegisterPage() {
                 placeholder="Confirm Password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-
               <span
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-2.5 cursor-pointer text-gray-500"

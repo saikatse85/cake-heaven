@@ -28,7 +28,9 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`/api/reviews?cakeId=${cake._id}`);
+        const res = await fetch(
+          `/api/reviews?cakeId=${cake._id}&status=approved`,
+        );
         const data = await res.json();
 
         setProductReviews(data);

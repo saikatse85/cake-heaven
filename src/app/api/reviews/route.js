@@ -4,9 +4,9 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    console.log("Incoming review:", body); // 🔍 debug
+    console.log("Incoming review:", body);
 
-    // ✅ Basic validation
+    // Basic validation
     if (!body.cakeId || !body.rating || !body.comment) {
       return Response.json(
         { error: "Missing required fields" },
@@ -16,6 +16,12 @@ export async function POST(req) {
 
     const client = await clientPromise;
     const db = client.db("cake-heaven");
+
+    //simple spam detection 
+    const spamWords = ["http", "www", ".com", "telegram", "whatsapp", "free money", "click here",];
+    const isSpam = spamWords.some((word) =>
+      body.comment.toLowerCase().includes(word)
+    );
 
     const review = {
       userName: body.userName || body.name || "Anonymous",
@@ -27,6 +33,7 @@ export async function POST(req) {
 
       rating: Number(body.rating),
       comment: body.comment,
+      status: isSpam ? "spam" : "pending",
 
       createdAt: new Date().toISOString(),
     };
@@ -39,7 +46,7 @@ export async function POST(req) {
       review,
     });
   } catch (error) {
-    console.error("Review API error:", error); // 🔥 IMPORTANT
+    console.error("Review API error:", error);
 
     return Response.json(
       {
@@ -55,16 +62,23 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
+
     const cakeId = searchParams.get("cakeId");
+    const status = searchParams.get("status");
 
     const client = await clientPromise;
     const db = client.db("cake-heaven");
 
     let query = {};
 
-    // 🎯 If cakeId exists → filter
+    // If cakeId exists
     if (cakeId) {
       query.cakeId = cakeId;
+    }
+
+    // If status exists
+    if (status) {
+      query.status = status;
     }
 
     const reviews = await db
@@ -83,23 +97,3 @@ export async function GET(req) {
     );
   }
 }
-
-// export async function GET() {
-//   try {
-//     const client = await clientPromise;
-//     const db = client.db("cake-heaven");
-
-//     const reviews = await db
-//       .collection("reviews")
-//       .find({})
-//       .sort({ createdAt: -1 })
-//       .toArray();
-
-//     return Response.json(reviews);
-//   } catch (error) {
-//     return Response.json(
-//       { error: "Failed to fetch reviews" },
-//       { status: 500 }
-//     );
-//   }
-// }
