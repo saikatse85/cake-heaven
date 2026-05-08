@@ -65,12 +65,6 @@ export default function AdminSidebar() {
               >
                 ✏️ Manage Product
               </Link>
-              <Link
-                href="/admin/products"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                📋 View All Products
-              </Link>
             </div>
           )}
         </div>
@@ -113,18 +107,6 @@ export default function AdminSidebar() {
               >
                 👤 View All Users
               </Link>
-              <Link
-                href="/dashboard/users/roles"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                🔑 Assign Role
-              </Link>
-              <Link
-                href="/admin/users/block"
-                className="block hover:text-pink-500 dark:hover:text-pink-400"
-              >
-                🚫 Block/Delete User
-              </Link>
             </div>
           )}
         </div>
@@ -141,7 +123,7 @@ export default function AdminSidebar() {
           {openMenu === "review" && (
             <div className="ml-4 space-y-1 mt-2 text-sm">
               <Link
-                href="/admin/reviews"
+                href="/dashboard/reviews"
                 className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
                 ⭐ View Reviews
@@ -150,7 +132,7 @@ export default function AdminSidebar() {
                 href="/admin/reviews/approve"
                 className="block hover:text-pink-500 dark:hover:text-pink-400"
               >
-                ✅ Approve/Delete Reviews
+                Approve/Delete Reviews
               </Link>
               <Link
                 href="/admin/reviews/spam"

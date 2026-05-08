@@ -5,8 +5,7 @@ export async function PATCH(req) {
   try {
     const body = await req.json();
 
-    const { uid, name, phone, address, image } = body;
-console.log(uid);
+    const { uid, name, phone, address, image, role, blocked } = body;
 
     if (!uid) {
       return NextResponse.json(
@@ -16,16 +15,18 @@ console.log(uid);
     }
 
     const client = await clientPromise;
-    const db = client.db("cake-heaven"); 
+    const db = client.db("cake-heaven");
 
     const users = db.collection("users");
 
-    
+    // Build update object dynamically
     const updateData = {
       ...(name && { name }),
       ...(phone && { phone }),
       ...(address && { address }),
       ...(image && { image }),
+      ...(role && { role }), 
+      ...(blocked !== undefined && { blocked }),
       updatedAt: new Date(),
     };
 
@@ -42,7 +43,7 @@ console.log(uid);
     }
 
     return NextResponse.json({
-      message: "Profile updated successfully",
+      message: "User updated successfully",
       success: true,
     });
   } catch (error) {

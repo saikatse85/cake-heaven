@@ -15,5 +15,9 @@ async function getUsers() {
 export default async function UsersPage() {
   const users = await getUsers();
 
-  return <AllUsers users={users} />;
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <AllUsers users={users} />
+    </div>
+  );
 }
