@@ -132,6 +132,13 @@ export default function Navbar() {
 
         {/* RIGHT SECTION */}
         <div className="flex items-center justify-center gap-2">
+          {/* MOBILE MENU BUTTON */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden p-2 rounded-lg"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
           {/* CART */}
           <div className="relative">
             <button onClick={() => setOpenCart(!openCart)} className="relative">
@@ -317,15 +324,26 @@ export default function Navbar() {
       </div>
 
       {/* MOBILE MENU */}
-      {mobileOpen && (
-        <div className="md:hidden px-4 pb-4 flex flex-col gap-3">
-          <Link href="/cart">🛒 Cart ({cart.length})</Link>
-          <NavItem href="/">Home</NavItem>
-          <NavItem href="/cakes">Cakes</NavItem>
-          <NavItem href="/about">About</NavItem>
-          <NavItem href="/contact">Contact</NavItem>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden"
+          >
+            <div className="px-4 pb-4 flex flex-col gap-3">
+              <Link href="/cart">🛒 Cart ({cart.length})</Link>
+
+              <NavItem href="/">Home</NavItem>
+              <NavItem href="/cakes">Cakes</NavItem>
+              <NavItem href="/about">About</NavItem>
+              <NavItem href="/contact">Contact</NavItem>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
