@@ -18,7 +18,7 @@ export function FeaturedCakes() {
   useEffect(() => {
     setLoading(true);
 
-    fetch("/api/cakes")
+    fetch("/api/cakes", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         setCakes(data);
@@ -59,65 +59,68 @@ export function FeaturedCakes() {
         }}
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
       >
-        {cakes?.slice(0, 6).map((cake, i) => (
-          <motion.div
-            key={i}
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            transition={{ duration: 0.5 }}
-          >
+        {[...cakes]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 6)
+          .map((cake, i) => (
             <motion.div
-              whileHover={{ y: -10 }}
-              transition={{ type: "spring", stiffness: 200 }}
+              key={i}
+              variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.5 }}
             >
-              <Card className="group hover:shadow-xl transition rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border dark:border-zinc-800">
-                {/* Image zoom */}
-                <div className="overflow-hidden">
-                  {cake?.image ? (
-                    <motion.img
-                      src={cake.image}
-                      alt={cake?.name}
-                      className="h-48 w-full object-cover"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  ) : (
-                    <div className="h-48 w-full flex items-center justify-center bg-gray-100 text-gray-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
+              <motion.div
+                whileHover={{ y: -10 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
+                <Card className="group hover:shadow-xl transition rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border dark:border-zinc-800">
+                  {/* Image zoom */}
+                  <div className="overflow-hidden">
+                    {cake?.image ? (
+                      <motion.img
+                        src={cake.image}
+                        alt={cake?.name}
+                        className="h-48 w-full object-cover"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.4 }}
+                      />
+                    ) : (
+                      <div className="h-48 w-full flex items-center justify-center bg-gray-100 text-gray-400">
+                        No Image
+                      </div>
+                    )}
+                  </div>
 
-                <CardContent className="p-4 space-y-2">
-                  <h3 className="font-semibold text-lg text-black dark:text-white">
-                    {cake?.name}
-                  </h3>
+                  <CardContent className="p-4 space-y-2">
+                    <h3 className="font-semibold text-lg text-black dark:text-white">
+                      {cake?.name}
+                    </h3>
 
-                  <p className="text-gray-500 dark:text-gray-300 text-sm line-clamp-2">
-                    {cake?.description}
-                  </p>
+                    <p className="text-gray-500 dark:text-gray-300 text-sm line-clamp-2">
+                      {cake?.description}
+                    </p>
 
-                  <p className="text-pink-500 font-bold">
-                    $ {cake?.price} Only
-                  </p>
-                  {/*Add to Cart Button */}
-                  <AddToCartButton
-                    addToCart={addToCart}
-                    cake={cake}
-                  ></AddToCartButton>
+                    <p className="text-pink-500 font-bold">
+                      $ {cake?.price} Only
+                    </p>
+                    {/*Add to Cart Button */}
+                    <AddToCartButton
+                      addToCart={addToCart}
+                      cake={cake}
+                    ></AddToCartButton>
 
-                  <Link href={`/cakes/${cake._id}`}>
-                    <motion.div whileTap={{ scale: 0.95 }}>
-                      <ViewDetailsButton>View Details</ViewDetailsButton>
-                    </motion.div>
-                  </Link>
-                </CardContent>
-              </Card>
+                    <Link href={`/cakes/${cake._id}`}>
+                      <motion.div whileTap={{ scale: 0.95 }}>
+                        <ViewDetailsButton>View Details</ViewDetailsButton>
+                      </motion.div>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        ))}
+          ))}
       </motion.div>
 
       {/* View All Button */}

@@ -9,6 +9,7 @@ import Link from "next/link";
 import ReviewModal from "./ReviewModal";
 import { useCart } from "@/context/CartContext";
 import Swal from "sweetalert2";
+import CakeImageGallery from "./CakeImageGallery";
 
 export default function CakeDetailsClient({ cake, relatedCakes }) {
   const [selectedSize, setSelectedSize] = useState("");
@@ -87,7 +88,7 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card className="overflow-hidden rounded-xl">
+          {/* <Card className="overflow-hidden rounded-xl">
             {cake?.image ? (
               <motion.img
                 src={cake.image}
@@ -101,7 +102,8 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
                 No Image
               </div>
             )}
-          </Card>
+          </Card> */}
+          <CakeImageGallery cake={cake} />
         </motion.div>
 
         {/* Details */}

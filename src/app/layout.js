@@ -2,9 +2,10 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Providers from "@/lib/providers";
 import AuthProvider from "@/context/AuthContext";
-import { ThemeProvider } from "@/lib/providers/ThemeProvider";
+
 import { CartProvider } from "@/context/CartContext";
 import { DiscountProvider } from "@/context/DiscountContext";
+import { ThemeProvider } from "next-themes";
 
 
 const inter = Inter({

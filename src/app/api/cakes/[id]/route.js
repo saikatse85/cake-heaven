@@ -5,7 +5,6 @@ import { ObjectId } from "mongodb";
 export async function GET(req, { params }) {
   try {
     const { id } =await params;
-    console.log(id);
     
     const client = await clientPromise;
     const db = client.db("cake-heaven");

@@ -23,6 +23,7 @@ export default function EditCakePage() {
     rating: "",
     description: "",
     image: "",
+    images: [], // ✅ FIX: added multiple images support
     available: true,
   });
 
@@ -40,6 +41,7 @@ export default function EditCakePage() {
             rating: data.rating || "",
             description: data.description || "",
             image: data.image || data.imageUrl || "",
+            images: data.images || [], // ✅ FIX
             available: data.available ?? true,
           });
         }
@@ -50,42 +52,43 @@ export default function EditCakePage() {
     };
   }, [id]);
 
+  // ✅ FIX: multiple image upload (Cloudinary API unchanged)
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
     setUploading(true);
 
-    const formDataUpload = new FormData();
-    formDataUpload.append("file", file);
-
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataUpload,
+      const uploadedImages = await Promise.all(
+        files.map(async (file) => {
+          const formDataUpload = new FormData();
+          formDataUpload.append("file", file);
+
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            body: formDataUpload,
+          });
+
+          const data = await res.json();
+          return res.ok ? data.url : null;
+        }),
+      );
+
+      const validImages = uploadedImages.filter(Boolean);
+
+      setFormData((prev) => ({
+        ...prev,
+        image: validImages[0] || prev.image, // thumbnail
+        images: [...(prev.images || []), ...validImages],
+      }));
+
+      Swal.fire({
+        icon: "success",
+        title: "Images Updated 🎉",
+        timer: 1200,
+        showConfirmButton: false,
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setFormData((prev) => ({
-          ...prev,
-          image: data.url,
-        }));
-
-        Swal.fire({
-          icon: "success",
-          title: "Image Updated 🎉",
-          timer: 1200,
-          showConfirmButton: false,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Upload Failed",
-          text: data.error || "Image upload failed",
-        });
-      }
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -149,7 +152,6 @@ export default function EditCakePage() {
             <label className="text-sm font-medium">Cake Name</label>
             <Input
               value={formData.name || ""}
-              placeholder="Cake Name"
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
@@ -161,7 +163,6 @@ export default function EditCakePage() {
             <label className="text-sm font-medium">Category</label>
             <Input
               value={formData.category || ""}
-              placeholder="Category"
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
@@ -174,7 +175,6 @@ export default function EditCakePage() {
             <Input
               type="number"
               value={formData.price || ""}
-              placeholder="Price"
               onChange={(e) =>
                 setFormData({ ...formData, price: e.target.value })
               }
@@ -187,7 +187,6 @@ export default function EditCakePage() {
             <Input
               type="number"
               value={formData.rating || ""}
-              placeholder="Rating"
               onChange={(e) =>
                 setFormData({ ...formData, rating: e.target.value })
               }
@@ -199,7 +198,6 @@ export default function EditCakePage() {
             <label className="text-sm font-medium">Description</label>
             <Textarea
               value={formData.description || ""}
-              placeholder="Description"
               onChange={(e) =>
                 setFormData({
                   ...formData,
@@ -209,31 +207,46 @@ export default function EditCakePage() {
             />
           </div>
 
-          {/* Image Preview */}
+          {/* MAIN IMAGE PREVIEW */}
           {formData.image && (
             <motion.img
               key={formData.image}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
               src={formData.image}
               className="w-full h-64 object-cover rounded-2xl"
-              alt="preview"
             />
           )}
 
-          {/* Upload */}
+          {/* MULTIPLE IMAGE PREVIEW (NEW) */}
+          {formData.images?.length > 0 && (
+            <div className="flex gap-2 flex-wrap">
+              {formData.images.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  className="w-20 h-20 object-cover rounded-lg border"
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Upload (now supports multiple) */}
           <div className="space-y-1">
             <label className="text-sm font-medium">Upload Image</label>
-            <Input type="file" accept="image/*" onChange={handleImageUpload} />
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+            />
           </div>
 
-          {/* Image URL */}
+          {/* Image URL (kept same) */}
           <div className="space-y-1">
             <label className="text-sm font-medium">Image URL</label>
             <Input
               value={formData.image || ""}
-              placeholder="Image URL"
               onChange={(e) =>
                 setFormData({ ...formData, image: e.target.value })
               }

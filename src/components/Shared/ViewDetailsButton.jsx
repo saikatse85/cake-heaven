@@ -43,7 +43,7 @@ export default function ViewDetailsButton({ children }) {
       transition={{ duration: 0.4 }}
       className="relative inline-block w-full"
     >
-      {/* ✅ FIXED GLOW (contained inside wrapper) */}
+      {/* FIXED GLOW  */}
       <div className="absolute inset-0 bg-pink-500 blur-xl opacity-20 rounded-md pointer-events-none" />
 
       <Button

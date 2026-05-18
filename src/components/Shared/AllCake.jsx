@@ -36,7 +36,11 @@ export function AllCakes() {
   const filteredCakes = useMemo(() => {
     const query = search.toLowerCase().trim();
 
-    return cakes.filter((cake) => {
+    const sortedCakes = [...cakes].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
+
+    return sortedCakes.filter((cake) => {
       if (!query) return true;
 
       const nameMatch = cake?.name?.toLowerCase().includes(query);

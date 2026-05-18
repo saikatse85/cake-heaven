@@ -1,5 +1,7 @@
 import clientPromise from "@/lib/mongodb";
 
+export const dynamic = "force-dynamic";
+
 // POST PROMISE
 export async function POST(req) {
   try {

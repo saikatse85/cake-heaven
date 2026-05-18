@@ -1,12 +1,13 @@
 "use client";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import { uploadImageToCloudinary } from "@/app/utils/cloudinaryUpload";
 
 export default function AddCakePage() {
   const [formData, setFormData] = useState({
@@ -16,65 +17,63 @@ export default function AddCakePage() {
     rating: "",
     description: "",
     image: "",
+    images: [],
     available: true,
   });
 
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  const fileInputRef = useRef(null);
+
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+
+    if (!files.length) return;
 
     setUploading(true);
 
-    const formDataUpload = new FormData();
-    formDataUpload.append("file", file);
-
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataUpload,
+      const uploadedImages = await Promise.all(
+        files.map(async (file) => {
+          return await uploadImageToCloudinary(file);
+        }),
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        image: uploadedImages[0],
+        images: uploadedImages,
+      }));
+
+      Swal.fire({
+        icon: "success",
+        title: "Images Uploaded 🎉",
+        text: `${uploadedImages.length} images uploaded successfully`,
+        timer: 1500,
+        showConfirmButton: false,
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setFormData((prev) => ({
-          ...prev,
-          image: data.url,
-        }));
-
-        Swal.fire({
-          icon: "success",
-          title: "Image Uploaded 🎉",
-          text: "Your image uploaded successfully",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Upload Failed",
-          text: data.error || "Image upload failed",
-        });
-      }
     } catch (err) {
       console.error(err);
+
       Swal.fire({
         icon: "error",
-        title: "Server Error",
-        text: "Image upload failed",
+        title: "Upload Failed",
+        text: err.message || "Image upload failed",
       });
     } finally {
       setUploading(false);
+
+      //reset file input so onChange works properly every time
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // basic validation alert
     if (
       !formData.name ||
       !formData.category ||
@@ -126,6 +125,7 @@ export default function AddCakePage() {
           rating: "",
           description: "",
           image: "",
+          images: [],
           available: true,
         });
       } else {
@@ -164,7 +164,6 @@ export default function AddCakePage() {
           border border-pink-200/40 dark:border-pink-400/10
           shadow-[0_8px_32px_rgba(255,105,180,0.25)]"
         >
-          {/* Title */}
           <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
             Add Cake 🎂
           </h1>
@@ -230,7 +229,7 @@ export default function AddCakePage() {
             </div>
 
             <div className="space-y-1">
-              <label className="test-sm font-medium">Description</label>
+              <label className="text-sm font-medium">Description</label>
               <Textarea
                 placeholder="Description"
                 value={formData.description}
@@ -242,10 +241,12 @@ export default function AddCakePage() {
               />
             </div>
 
-            {/* Image Upload */}
+            {/* FIX: attach ref here */}
             <Input
+              ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImageUpload}
               className="bg-white/70 dark:bg-pink-500/10 dark:text-white backdrop-blur-md"
             />
@@ -256,29 +257,21 @@ export default function AddCakePage() {
               </p>
             )}
 
-            {formData.image && (
-              <div className="flex justify-center">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="relative group"
-                >
-                  <div className="absolute -inset-1 bg-pink-500/30 blur-xl rounded-2xl group-hover:bg-pink-500/40 transition"></div>
-
-                  <div className="relative p-1 rounded-2xl bg-white/30 dark:bg-pink-500/10 backdrop-blur-xl border border-pink-200/40 dark:border-pink-400/20 shadow-lg">
+            {formData.images?.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-3">
+                {formData.images.map((img, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                  >
                     <img
-                      src={formData.image}
-                      alt="preview"
-                      className="w-28 h-28 object-cover rounded-xl"
+                      src={img}
+                      alt={`preview-${index}`}
+                      className="w-24 h-24 object-cover rounded-xl border"
                     />
-
-                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2">
-                      <span className="text-[10px] px-2 py-1 rounded-full bg-pink-500 text-white shadow-md">
-                        Preview
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                ))}
               </div>
             )}
 
