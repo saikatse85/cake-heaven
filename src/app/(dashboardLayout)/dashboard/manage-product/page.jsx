@@ -102,17 +102,21 @@ export default function ManageProduct() {
               hover:shadow-[0_12px_40px_rgba(255,105,180,0.35)]
               transition"
             >
-              {cake?.image ? (
-                <img
-                  src={cake.image}
-                  alt={cake?.name}
-                  className="h-40 w-full object-cover"
-                />
-              ) : (
-                <div className="h-40 w-full flex items-center justify-center bg-gray-100 text-gray-400">
-                  No Image
-                </div>
-              )}
+              <div className="overflow-hidden">
+                {cake?.image ? (
+                  <motion.img
+                    src={cake.image}
+                    alt={cake?.name}
+                    className="h-48 w-full object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.4 }}
+                  />
+                ) : (
+                  <div className="h-48 w-full flex items-center justify-center bg-gray-100 text-gray-400">
+                    No Image
+                  </div>
+                )}
+              </div>
 
               <CardContent className="p-4 space-y-2">
                 <h3 className="font-semibold text-lg">{cake.name}</h3>
@@ -122,9 +126,19 @@ export default function ManageProduct() {
                 </p>
 
                 <p className="text-pink-600 dark:text-pink-400 font-bold">
-                  $ {cake.price}
+                  ৳ {cake.price}
                 </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-pink-500 font-bold">
+                    ৳ {cake?.discountPrice || cake?.price} Only
+                  </span>
 
+                  {cake?.discountPrice && (
+                    <span className="line-through text-gray-400 text-sm">
+                      ৳ {cake?.price}
+                    </span>
+                  )}
+                </div>
                 {/* Actions */}
                 <div className="flex gap-2 pt-2">
                   <Link

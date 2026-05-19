@@ -16,33 +16,59 @@ export default function EditCakePage() {
 
   const [uploading, setUploading] = useState(false);
 
+  // ✅ FULL PREFILLED STRUCTURE (same as Add page)
   const [formData, setFormData] = useState({
     name: "",
+    slug: "",
     category: "",
+    flavor: "",
+    weight: "1kg",
+    type: "egg",
     price: "",
+    discountPrice: "",
+    stock: "",
     rating: "",
+    preparationTime: "",
     description: "",
+    ingredients: "",
     image: "",
-    images: [], // ✅ FIX: added multiple images support
+    images: [],
+    featured: false,
+    bestSeller: false,
     available: true,
+    status: "published",
   });
 
+  // =========================
+  // LOAD DATA (PREFILL FIX)
+  // =========================
   useEffect(() => {
     let isMounted = true;
 
     fetch(`/api/cakes/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        if (isMounted) {
+        if (isMounted && data) {
           setFormData({
             name: data.name || "",
+            slug: data.slug || "",
             category: data.category || "",
+            flavor: data.flavor || "",
+            weight: data.weight || "1kg",
+            type: data.type || "egg",
             price: data.price || "",
+            discountPrice: data.discountPrice || "",
+            stock: data.stock || "",
             rating: data.rating || "",
+            preparationTime: data.preparationTime || "",
             description: data.description || "",
-            image: data.image || data.imageUrl || "",
-            images: data.images || [], // ✅ FIX
+            ingredients: data.ingredients || "",
+            image: data.image || "",
+            images: data.images || [],
+            featured: data.featured ?? false,
+            bestSeller: data.bestSeller ?? false,
             available: data.available ?? true,
+            status: data.status || "published",
           });
         }
       });
@@ -52,7 +78,9 @@ export default function EditCakePage() {
     };
   }, [id]);
 
-  // ✅ FIX: multiple image upload (Cloudinary API unchanged)
+  // =========================
+  // IMAGE UPLOAD (UNCHANGED LOGIC)
+  // =========================
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
@@ -79,7 +107,7 @@ export default function EditCakePage() {
 
       setFormData((prev) => ({
         ...prev,
-        image: validImages[0] || prev.image, // thumbnail
+        image: validImages[0] || prev.image,
         images: [...(prev.images || []), ...validImages],
       }));
 
@@ -100,6 +128,9 @@ export default function EditCakePage() {
     }
   };
 
+  // =========================
+  // UPDATE SUBMIT (UNCHANGED)
+  // =========================
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -107,6 +138,9 @@ export default function EditCakePage() {
       ...formData,
       price: Number(formData.price),
       rating: Number(formData.rating),
+      discountPrice: formData.discountPrice
+        ? Number(formData.discountPrice)
+        : 0,
     };
 
     const res = await fetch(`/api/cakes/${id}`, {
@@ -143,82 +177,89 @@ export default function EditCakePage() {
     >
       <div className="space-y-5 rounded-3xl border border-pink-200/50 dark:border-pink-500/20 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl shadow-xl p-6">
         <h1 className="text-2xl font-bold text-pink-600 dark:text-pink-400">
-          Edit Cake
+          Edit Cake 🎂
         </h1>
 
         <form onSubmit={handleUpdate} className="space-y-5">
-          {/* Name */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Cake Name</label>
-            <Input
-              value={formData.name || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </div>
+          {/* NAME */}
+          <Input
+            placeholder="Cake Name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
 
-          {/* Category */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Category</label>
-            <Input
-              value={formData.category || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-            />
-          </div>
+          {/* CATEGORY */}
+          <Input
+            placeholder="Category"
+            value={formData.category}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
+          />
 
-          {/* Price */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Price</label>
-            <Input
-              type="number"
-              value={formData.price || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
-            />
-          </div>
+          {/* PRICE */}
+          <Input
+            type="number"
+            placeholder="Price"
+            value={formData.price}
+            onChange={(e) =>
+              setFormData({ ...formData, price: e.target.value })
+            }
+          />
 
-          {/* Rating */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Rating</label>
-            <Input
-              type="number"
-              value={formData.rating || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, rating: e.target.value })
-              }
-            />
-          </div>
+          {/* DISCOUNT */}
+          <Input
+            type="number"
+            placeholder="Discount Price"
+            value={formData.discountPrice}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                discountPrice: e.target.value,
+              })
+            }
+          />
 
-          {/* Description */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Description</label>
-            <Textarea
-              value={formData.description || ""}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  description: e.target.value,
-                })
-              }
-            />
-          </div>
+          {/* STOCK */}
+          <Input
+            type="number"
+            placeholder="Stock"
+            value={formData.stock}
+            onChange={(e) =>
+              setFormData({ ...formData, stock: e.target.value })
+            }
+          />
 
-          {/* MAIN IMAGE PREVIEW */}
+          {/* FLAVOR */}
+          <Input
+            placeholder="Flavor"
+            value={formData.flavor}
+            onChange={(e) =>
+              setFormData({ ...formData, flavor: e.target.value })
+            }
+          />
+
+          {/* DESCRIPTION */}
+          <Textarea
+            placeholder="Description"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                description: e.target.value,
+              })
+            }
+          />
+
+          {/* MAIN IMAGE */}
           {formData.image && (
-            <motion.img
-              key={formData.image}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <img
               src={formData.image}
               className="w-full h-64 object-cover rounded-2xl"
             />
           )}
 
-          {/* MULTIPLE IMAGE PREVIEW (NEW) */}
+          {/* MULTI IMAGES */}
           {formData.images?.length > 0 && (
             <div className="flex gap-2 flex-wrap">
               {formData.images.map((img, i) => (
@@ -231,28 +272,15 @@ export default function EditCakePage() {
             </div>
           )}
 
-          {/* Upload (now supports multiple) */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Upload Image</label>
-            <Input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-            />
-          </div>
+          {/* UPLOAD */}
+          <Input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageUpload}
+          />
 
-          {/* Image URL (kept same) */}
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Image URL</label>
-            <Input
-              value={formData.image || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
-              }
-            />
-          </div>
-
+          {/* BUTTON */}
           <Button className="w-full bg-pink-500 hover:bg-pink-600 text-white">
             {uploading ? "Uploading..." : "Update Cake"}
           </Button>

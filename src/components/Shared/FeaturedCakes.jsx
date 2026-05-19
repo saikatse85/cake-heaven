@@ -103,8 +103,19 @@ export function FeaturedCakes() {
                     </p>
 
                     <p className="text-pink-500 font-bold">
-                      $ {cake?.price} Only
+                      ৳ {cake?.price} Only
                     </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-pink-500 font-bold">
+                        ৳ {cake?.discountPrice || cake?.price} Only
+                      </span>
+
+                      {cake?.discountPrice && (
+                        <span className="line-through text-gray-400 text-sm">
+                          ৳ {cake?.price}
+                        </span>
+                      )}
+                    </div>
                     {/*Add to Cart Button */}
                     <AddToCartButton
                       addToCart={addToCart}

@@ -39,6 +39,7 @@ export async function PUT(req, { params }) {
       rating: Number(body.rating),
       description: body.description,
       available: body.available,
+      discountPrice: Number(body.discountPrice),
     };
     if (body.image && body.image !== "") {
   updateData.image = body.image;
