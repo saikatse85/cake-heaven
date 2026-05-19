@@ -45,7 +45,7 @@ export default function PromoBanner() {
           viewport={{ once: true }}
           className="text-white/90 relative z-10"
         >
-          Celebrate your moments with delicious handmade Desert.
+          Celebrate your moments with delicious handmade Dessert.
         </motion.p>
 
         <motion.div

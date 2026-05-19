@@ -84,10 +84,10 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <h2 className="text-2xl font-bold text-pink-500">
-              Desert Heaven 🎂
+              Dessert Heaven 🎂
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Freshly baked Desert made with love.
+              Freshly baked Dessert made with love.
             </p>
           </div>
 

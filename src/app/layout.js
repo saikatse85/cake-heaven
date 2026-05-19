@@ -21,7 +21,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  title: "Desert Heaven",
+  title: "Dessert Heaven",
   icons: {
     icon: "/logo.png",
   },

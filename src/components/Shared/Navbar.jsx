@@ -118,14 +118,14 @@ export default function Navbar() {
           href="/"
           className="text-2xl flex items-center font-bold text-pink-600 dark:text-pink-400"
         >
-          Desert Heaven
           <img src="/logo.png" className="h-12 w-12" alt="logo" />
+          Dessert Heaven
         </Link>
 
         {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-6 dark:text-white">
           <NavItem href="/">Home</NavItem>
-          <NavItem href="/cakes">Desert</NavItem>
+          <NavItem href="/cakes">Dessert</NavItem>
           <NavItem href="/about">About</NavItem>
           <NavItem href="/contact">Contact</NavItem>
         </div>

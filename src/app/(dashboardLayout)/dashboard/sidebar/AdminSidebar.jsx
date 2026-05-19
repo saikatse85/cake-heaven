@@ -32,7 +32,7 @@ export default function AdminSidebar() {
           height={50}
           priority
         />
-        <h2 className="text-xl font-bold text-pink-500">Desert Heaven</h2>
+        <h2 className="text-xl font-bold text-pink-500">Dessert Heaven</h2>
       </Link>
 
       {/* TOP MENU AREA */}
