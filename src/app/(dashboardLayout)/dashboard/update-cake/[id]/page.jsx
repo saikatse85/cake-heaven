@@ -22,7 +22,8 @@ export default function EditCakePage() {
     slug: "",
     category: "",
     flavor: "",
-    weight: "1kg",
+    weight: "1",
+    unit: "kg",
     type: "egg",
     price: "",
     discountPrice: "",
@@ -54,7 +55,8 @@ export default function EditCakePage() {
             slug: data.slug || "",
             category: data.category || "",
             flavor: data.flavor || "",
-            weight: data.weight || "1kg",
+            weight: Number(data.weight) || 1,
+            unit: data.unit || "kg",
             type: data.type || "egg",
             price: data.price || "",
             discountPrice: data.discountPrice || "",
@@ -136,6 +138,7 @@ export default function EditCakePage() {
 
     const updatedCake = {
       ...formData,
+      weight: Number(formData.weight),
       price: Number(formData.price),
       rating: Number(formData.rating),
       discountPrice: formData.discountPrice
@@ -182,6 +185,7 @@ export default function EditCakePage() {
 
         <form onSubmit={handleUpdate} className="space-y-5">
           {/* NAME */}
+          <label className="text-sm font-medium">Dessert Name</label>
           <Input
             placeholder="Cake Name"
             value={formData.name}
@@ -189,6 +193,7 @@ export default function EditCakePage() {
           />
 
           {/* CATEGORY */}
+          <label className="text-sm font-medium">Dessert Category</label>
           <Input
             placeholder="Category"
             value={formData.category}
@@ -198,6 +203,7 @@ export default function EditCakePage() {
           />
 
           {/* PRICE */}
+          <label className="text-sm font-medium">Dessert Price</label>
           <Input
             type="number"
             placeholder="Price"
@@ -206,8 +212,54 @@ export default function EditCakePage() {
               setFormData({ ...formData, price: e.target.value })
             }
           />
+          {/* weight field */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Cake Weight</label>
 
+            <select
+              value={formData.weight}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  weight: parseFloat(e.target.value),
+                })
+              }
+              className="w-full rounded-md border
+    bg-white text-gray-900
+    dark:bg-gray-900/50 dark:text-white
+    border-gray-300 dark:border-gray-700
+    p-3
+    focus:outline-none focus:ring-2 focus:ring-pink-500"
+            >
+              <option value="1">1</option>
+              <option value="1.5">1.5</option>
+              <option value="2">2</option>
+              <option value="2.5">2.5</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          {/* Unit field */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Cake Unit</label>
+
+            <select
+              value={formData.unit}
+              onChange={(e) =>
+                setFormData({ ...formData, unit: e.target.value })
+              }
+              className="w-full rounded-md border
+    bg-white text-gray-900
+    dark:bg-gray-900/50 dark:text-white
+    border-gray-300 dark:border-gray-700
+    p-3
+    focus:outline-none focus:ring-2 focus:ring-pink-500"
+            >
+              <option value="kg">kg</option>
+              <option value="pound">pound</option>
+            </select>
+          </div>
           {/* DISCOUNT */}
+          <label className="text-sm font-medium">Discount Price</label>
           <Input
             type="number"
             placeholder="Discount Price"
@@ -231,6 +283,7 @@ export default function EditCakePage() {
           />
 
           {/* FLAVOR */}
+          <label className="text-sm font-medium">Flavor</label>
           <Input
             placeholder="Flavor"
             value={formData.flavor}
@@ -240,6 +293,7 @@ export default function EditCakePage() {
           />
 
           {/* DESCRIPTION */}
+          <label className="text-sm font-medium">Description</label>
           <Textarea
             placeholder="Description"
             value={formData.description}
