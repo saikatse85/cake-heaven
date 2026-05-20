@@ -4,7 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { Button } from "@/components/ui/button";
 
-export default function OrderNowButton({ children }) {
+export default function OrderNowButton({ className = "", children }) {
   const btnRef = useRef(null);
 
   const handleEnter = () => {
@@ -36,7 +36,7 @@ export default function OrderNowButton({ children }) {
   };
 
   return (
-    <div className="relative inline-block">
+    <div className="relative w-auto isolate">
       {/* Glow effect */}
       <div className="absolute inset-0 bg-pink-500 blur-xl opacity-40 rounded-xl animate-pulse"></div>
 
@@ -46,15 +46,15 @@ export default function OrderNowButton({ children }) {
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
         onClick={handleClick}
-        className="
+        className={`
           relative 
           bg-gradient-to-r from-pink-500 to-rose-500 
           hover:from-pink-600 hover:to-rose-600 
           text-white px-10 py-6 
           text-lg font-semibold 
           rounded-xl 
-          transition-none
-        "
+          transition-none ${className}
+        `}
       >
         {children}
       </Button>

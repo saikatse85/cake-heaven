@@ -88,21 +88,6 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          {/* <Card className="overflow-hidden rounded-xl">
-            {cake?.image ? (
-              <motion.img
-                src={cake.image}
-                alt={cake?.name}
-                className="w-full h-80 object-cover"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              />
-            ) : (
-              <div className="w-full h-80 flex items-center justify-center bg-gray-100 text-gray-400">
-                No Image
-              </div>
-            )}
-          </Card> */}
           <CakeImageGallery cake={cake} />
         </motion.div>
 
@@ -147,11 +132,13 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
               <select
                 value={selectedSize}
                 onChange={(e) => setSelectedSize(e.target.value)}
-                className="w-full border rounded-lg p-2 dark:bg-zinc-900"
+                className="w-full border rounded-lg p-2 dark:bg-pink-900"
               >
                 <option value="">Choose Size</option>
                 <option value="1 Pound">1 Pound</option>
+                <option value="1.5 Pound">1.5 Pound</option>
                 <option value="2 Pound">2 Pound</option>
+                <option value="2.5 Pound">2.5 Pound</option>
                 <option value="3 Pound">3 Pound</option>
               </select>
             </div>
@@ -162,7 +149,7 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
               <select
                 value={selectedFlavor}
                 onChange={(e) => setSelectedFlavor(e.target.value)}
-                className="w-full border rounded-lg p-2 dark:bg-zinc-900"
+                className="w-full border rounded-lg p-2 dark:bg-pink-900"
               >
                 <option value="">Choose Flavor</option>
                 <option value="Chocolate">Chocolate</option>
@@ -191,6 +178,7 @@ export default function CakeDetailsClient({ cake, relatedCakes }) {
               size={selectedSize}
               flavor={selectedFlavor}
               quantity={quantity}
+              className="w-full h-8"
             />
           </motion.div>
           {/*Add to cart*/}

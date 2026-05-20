@@ -17,7 +17,8 @@ export default function AddCakePage() {
     slug: "",
     category: "",
     flavor: "",
-    weight: "1kg",
+    weight: "1",
+    unit: "kg",
     type: "egg",
     price: "",
     discountPrice: "",
@@ -145,7 +146,8 @@ export default function AddCakePage() {
           slug: "",
           category: "",
           flavor: "",
-          weight: "1kg",
+          weight: "1",
+          unit: "kg",
           type: "egg",
           price: "",
           discountPrice: "",
@@ -285,17 +287,43 @@ export default function AddCakePage() {
               <select
                 value={formData.weight}
                 onChange={(e) =>
-                  setFormData({ ...formData, weight: e.target.value })
+                  setFormData({
+                    ...formData,
+                    weight: parseFloat(e.target.value),
+                  })
                 }
-                className="w-full rounded-md border bg-white/70 dark:bg-pink-500/10 p-3 dark:text-white"
+                className="w-full rounded-md border
+    bg-white text-gray-900
+    dark:bg-pink-900/40 dark:text-white
+    border-gray-300 dark:border-gray-700
+    p-3
+    focus:outline-none focus:ring-2 focus:ring-pink-500"
               >
-                <option value="500gm">500gm</option>
-                <option value="1pound">1 Pound</option>
-                <option value="2pound">2 Pound</option>
-                <option value="3pound">3 Pound</option>
-                <option value="1kg">1kg</option>
-                <option value="2kg">2kg</option>
-                <option value="3kg">3kg</option>
+                <option value="1">1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+            {/* Unit field */}
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Cake Unit</label>
+
+              <select
+                value={formData.unit}
+                onChange={(e) =>
+                  setFormData({ ...formData, unit: e.target.value })
+                }
+                className="w-full rounded-md border
+    bg-white text-gray-900
+    dark:bg-pink-900/40 dark:text-white
+    border-gray-300 dark:border-gray-700
+    p-3
+    focus:outline-none focus:ring-2 focus:ring-pink-500"
+              >
+                <option value="kg">kg</option>
+                <option value="pound">pound</option>
               </select>
             </div>
             {/* Egg or Eggless field */}

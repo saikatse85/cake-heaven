@@ -14,30 +14,39 @@ export default function CartPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    setItems(cart);
+    const updatedCart = cart.map((item) => ({
+      ...item,
+      quantity: Number(item.quantity) || 1,
+    }));
+
+    setItems(updatedCart);
   }, [cart]);
 
   //increase quantity
   const increaseQty = (id) => {
     const updated = items.map((item) =>
-      item._id === id ? { ...item, quantity: item.quantity + 1 } : item,
+      item._id === id
+        ? { ...item, quantity: Number(item.quantity || 1) + 1 }
+        : item,
     );
     setItems(updated);
+    localStorage.setItem("cart", JSON.stringify(updated));
   };
 
   //decrease quantity
   const decreaseQty = (id) => {
     const updated = items.map((item) =>
       item._id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
+        ? { ...item, quantity: Number(item.quantity || 1) - 1 }
         : item,
     );
     setItems(updated);
+    localStorage.setItem("cart", JSON.stringify(updated));
   };
 
   //TOTAL PRICE
   const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + (item.discountPrice || item.price) * item.quantity,
     0,
   );
 
@@ -70,7 +79,7 @@ export default function CartPage() {
         return;
       }
 
-      for (const item of cart) {
+      for (const item of items) {
         await fetch("/api/orders", {
           method: "POST",
           headers: {
@@ -92,8 +101,9 @@ export default function CartPage() {
             flavor: item.flavor || "default",
 
             quantity: item.quantity,
-            price: item.price,
-            totalPrice: item.price * item.quantity,
+            price: item.discountPrice || item.price,
+
+            totalPrice: (item.discountPrice || item.price) * item.quantity,
 
             deliveryDate: new Date(),
           }),
@@ -173,7 +183,7 @@ export default function CartPage() {
                     <h2 className="font-semibold">{item.name}</h2>
 
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      ৳{item.price} × {item.quantity}
+                      ৳{item?.discountPrice || item?.price} × {item.quantity}
                     </p>
 
                     {/* QUANTITY */}
@@ -185,7 +195,7 @@ export default function CartPage() {
                         -
                       </button>
 
-                      <span>{item.quantity}</span>
+                      <span>{Number(item.quantity) || 1}</span>
 
                       <button
                         onClick={() => increaseQty(item._id)}
@@ -200,7 +210,17 @@ export default function CartPage() {
                 {/* RIGHT */}
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => removeFromCart(item._id)}
+                  onClick={() => {
+                    removeFromCart(item._id);
+
+                    const updated = items.filter(
+                      (cartItem) => cartItem._id !== item._id,
+                    );
+
+                    setItems(updated);
+
+                    localStorage.setItem("cart", JSON.stringify(updated));
+                  }}
                   className="text-pink-500 hover:text-pink-600 transition"
                 >
                   Remove

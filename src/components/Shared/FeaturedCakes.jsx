@@ -5,14 +5,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Heart, Star } from "lucide-react";
+
 import { FeaturedCakesSkeleton } from "./FeaturedCakeSkeleton";
-import ViewDetailsButton from "./ViewDetailsButton";
 import { useCart } from "@/context/CartContext";
-import AddToCartButton from "./AddToCartButton";
+import OrderButton from "./OrderButton";
 
 export function FeaturedCakes() {
   const [cakes, setCakes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedFlavor, setSelectedFlavor] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -32,19 +37,19 @@ export function FeaturedCakes() {
   }
 
   return (
-    <section className="py-16 px-6 bg-white dark:bg-zinc-950 text-black dark:text-white">
+    <section className="py-16 px-6 bg-white dark:bg-zinc-950">
       {/* Heading */}
       <motion.h2
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         viewport={{ once: true }}
-        className="text-3xl font-bold text-center mb-10"
+        className="text-3xl md:text-4xl font-bold text-center mb-12 text-zinc-900 dark:text-white"
       >
         Featured Dessert
       </motion.h2>
 
-      {/* Grid with stagger */}
+      {/* Grid */}
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -57,7 +62,7 @@ export function FeaturedCakes() {
             },
           },
         }}
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
       >
         {[...cakes]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -66,66 +71,120 @@ export function FeaturedCakes() {
             <motion.div
               key={i}
               variants={{
-                hidden: { opacity: 0, y: 50 },
+                hidden: { opacity: 0, y: 40 },
                 visible: { opacity: 1, y: 0 },
               }}
               transition={{ duration: 0.5 }}
             >
               <motion.div
-                whileHover={{ y: -10 }}
+                whileHover={{ y: -8 }}
                 transition={{ type: "spring", stiffness: 200 }}
               >
-                <Card className="group hover:shadow-xl transition rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border dark:border-zinc-800">
-                  {/* Image zoom */}
-                  <div className="overflow-hidden">
+                <Card className="rounded-[30px] overflow-hidden border-0 shadow-md hover:shadow-2xl transition-all duration-300 bg-white dark:bg-zinc-900">
+                  {/* Image */}
+                  <div className="relative overflow-hidden">
                     {cake?.image ? (
                       <motion.img
                         src={cake.image}
                         alt={cake?.name}
-                        className="h-48 w-full object-cover"
-                        whileHover={{ scale: 1.1 }}
+                        className="h-[260px] w-full object-cover"
+                        whileHover={{ scale: 1.08 }}
                         transition={{ duration: 0.4 }}
                       />
                     ) : (
-                      <div className="h-48 w-full flex items-center justify-center bg-gray-100 text-gray-400">
+                      <div className="h-[260px] w-full bg-zinc-100 flex items-center justify-center">
                         No Image
                       </div>
                     )}
+
+                    {/* Heart Icon */}
+                    <button className="absolute top-4 right-4 h-11 w-11 rounded-full bg-white shadow-md flex items-center justify-center">
+                      <Heart
+                        size={20}
+                        className="fill-pink-500 text-pink-500"
+                      />
+                    </button>
                   </div>
 
-                  <CardContent className="p-4 space-y-2">
-                    <h3 className="font-semibold text-lg text-black dark:text-white">
+                  {/* Content */}
+                  <CardContent className="p-5">
+                    {/* Name */}
+                    <h3 className="text-2xl font-semibold text-zinc-800 dark:text-white mb-2">
                       {cake?.name}
                     </h3>
 
-                    <p className="text-gray-500 dark:text-gray-300 text-sm line-clamp-2">
-                      {cake?.description}
-                    </p>
+                    {/* Price Section */}
+                    <div className="flex items-center gap-3 mb-3 flex-wrap">
+                      <span className="text-3xl font-bold text-black dark:text-white">
+                        ৳{cake?.discountPrice || cake?.price}
+                      </span>
 
-                    <p className="text-pink-500 font-bold">
-                      ৳ {cake?.price} Only
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-pink-500 font-bold">
-                        ৳ {cake?.discountPrice || cake?.price} Only
+                      <span className="text-sm text-zinc-500">
+                        {cake?.weight}
                       </span>
 
                       {cake?.discountPrice && (
-                        <span className="line-through text-gray-400 text-sm">
-                          ৳ {cake?.price}
-                        </span>
+                        <>
+                          <span className="line-through text-zinc-400 text-lg">
+                            ৳{cake?.price}
+                          </span>
+
+                          <span className="text-green-500 font-semibold text-sm">
+                            Save ৳{cake.price - cake.discountPrice}
+                          </span>
+                        </>
                       )}
                     </div>
-                    {/*Add to Cart Button */}
-                    <AddToCartButton
-                      addToCart={addToCart}
-                      cake={cake}
-                    ></AddToCartButton>
 
+                    {/* Rating */}
+                    <div className="flex items-center gap-2 mb-5">
+                      <Star size={18} className="fill-pink-500 text-pink-500" />
+
+                      <span className="text-pink-500 font-semibold">
+                        {cake?.rating || "5.0"} (12.9K)
+                      </span>
+                    </div>
+                    {/*Flavor weight */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="px-2 py-1 rounded-full bg-pink-500/20">
+                        {cake?.weight}
+                      </span>
+                      <span className="px-2 py-1 rounded-full bg-pink-500/20">
+                        {cake?.flavor}
+                      </span>
+                      <span className="px-2 py-1 rounded-full bg-pink-500/20">
+                        {cake?.type}
+                      </span>
+                    </div>
+                    {/* Buttons */}
+                    <div className="flex items-center justify-between gap-3">
+                      {/* Buy Now */}
+                      <OrderButton
+                        cakeId={cake._id}
+                        size={selectedSize}
+                        flavor={selectedFlavor}
+                        quantity={quantity}
+                        className="flex-1 rounded-full h-10 bg-pink-500 hover:bg-pink-600 text-white text-base font-semibold shadow-md"
+                      ></OrderButton>
+
+                      {/* Add to Cart */}
+                      <Button
+                        variant="outline"
+                        onClick={() => addToCart(cake)}
+                        className="rounded-full h-10 border-2 border-pink-300 text-pink-500 hover:bg-pink-50 dark:hover:bg-zinc-800 text-base font-semibold"
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
+
+                    {/* View Details */}
                     <Link href={`/cakes/${cake._id}`}>
-                      <motion.div whileTap={{ scale: 0.95 }}>
-                        <ViewDetailsButton>View Details</ViewDetailsButton>
-                      </motion.div>
+                      <Button
+                        variant="ghost"
+                        className="w-full mt-3 rounded-full text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      >
+                        View Details
+                      </Button>
                     </Link>
                   </CardContent>
                 </Card>
@@ -134,20 +193,17 @@ export function FeaturedCakes() {
           ))}
       </motion.div>
 
-      {/* View All Button */}
+      {/* View All */}
       <motion.div
-        className="flex justify-center mt-10"
-        initial={{ opacity: 0, y: 30 }}
+        className="flex justify-center mt-14"
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.2 }}
         viewport={{ once: true }}
       >
         <Link href="/cakes">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              variant="outline"
-              className="px-8 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white dark:border-pink-400 dark:text-pink-300"
-            >
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button className="rounded-full px-10 h-12 bg-pink-500 hover:bg-pink-600 text-white text-base">
               View All Cakes
             </Button>
           </motion.div>

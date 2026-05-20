@@ -9,7 +9,13 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import Swal from "sweetalert2";
 
-export default function OrderButton({ cakeId, size, flavor, quantity }) {
+export default function OrderButton({
+  className = "",
+  cakeId,
+  size,
+  flavor,
+  quantity,
+}) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const btnRef = useRef(null);
@@ -83,25 +89,25 @@ export default function OrderButton({ cakeId, size, flavor, quantity }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative inline-block w-full"
+      className="relative w-auto isolate"
     >
       {/* Glow background */}
       <div className="absolute inset-0 bg-pink-500 blur-xl opacity-25 rounded-xl pointer-events-none" />
-
       <Button
         ref={btnRef}
         size="lg"
         onClick={handleOrder}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
-        className="
-          relative w-full 
+        className={`
+          relative
+          w-auto
+          h-12
+          rounded-full
           bg-gradient-to-r from-pink-500 to-rose-500 
           hover:from-pink-600 hover:to-rose-600 
-          text-white font-semibold 
-          rounded-xl 
-          transition-none
-        "
+          text-white font-semibold  
+          transition-none ${className}`}
       >
         Order Now 🍰
       </Button>
