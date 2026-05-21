@@ -18,8 +18,8 @@ import Link from "next/link";
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [identifier, setIdentifier] = useState("");
+
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -38,7 +38,7 @@ export default function LoginPage() {
       // =========================
       // 1. VALIDATION
       // =========================
-      if (!email && !phone) {
+      if (!identifier) {
         setError("Email or phone is required");
         setLoading(false);
         return;
@@ -53,6 +53,8 @@ export default function LoginPage() {
       // =========================
       // 2. MONGO LOGIN
       // =========================
+      const isEmail = identifier.includes("@");
+
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -60,8 +62,8 @@ export default function LoginPage() {
         },
         body: JSON.stringify({
           mode: "login",
-          email: email || "",
-          phone: phone || "",
+          email: isEmail ? identifier : "",
+          phone: !isEmail ? identifier : "",
           password,
         }),
       });
@@ -84,11 +86,7 @@ export default function LoginPage() {
       try {
         const { signInWithEmailAndPassword } = await import("firebase/auth");
 
-        let loginId = email;
-
-        if (!email && phone) {
-          loginId = mongoUser.email;
-        }
+        let loginId = mongoUser.email;
 
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -224,26 +222,25 @@ export default function LoginPage() {
             <Input
               type="text"
               placeholder="Email or Mobile Number"
-              onChange={(e) => {
-                const value = e.target.value;
-
-                // simple detection
-                if (value.includes("@")) {
-                  setEmail(value);
-                  setPhone("");
-                } else {
-                  setPhone(value);
-                  setEmail("");
-                }
-              }}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
             />
 
             <Input
               type="password"
               placeholder="Password"
               required
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <div className="text-left text-sm">
+              <Link
+                href="/forgot-password"
+                className="text-pink-500 hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
 
             <Button
               type="submit"

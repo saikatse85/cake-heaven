@@ -8,6 +8,7 @@ import {
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
+  sendEmailVerification,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -37,14 +38,33 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
 
-  // 🔐 PASSWORD VALIDATION (NEW ADDED)
+  // valid email
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+  //Trusted email provider
+  const isRealEmailProvider = (email) => {
+    const allowedDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "outlook.com",
+      "hotmail.com",
+      "icloud.com",
+    ];
+
+    const domain = email.split("@")[1];
+
+    return allowedDomains.includes(domain);
+  };
+
+  // PASSWORD VALIDATION
   const isStrongPassword = (password) => {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/.test(
       password,
     );
   };
 
-  // 🔐 REGISTER
+  // REGISTER
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -55,6 +75,19 @@ export default function RegisterPage() {
       return;
     }
 
+    // Email validation ONLY if email exists
+    if (email.trim() !== "") {
+      if (!isValidEmail(email)) {
+        setFormError("Please enter a valid email address");
+        return;
+      }
+
+      if (!isRealEmailProvider(email)) {
+        setFormError("Please use a real email provider");
+        return;
+      }
+    }
+    // Phone validation
     if (!/^01[3-9]\d{8}$/.test(phone)) {
       setFormError("Enter valid BD mobile number");
       return;
@@ -101,6 +134,10 @@ export default function RegisterPage() {
         photoURL: imageUrl,
       });
 
+      if (email.trim() !== "") {
+        await sendEmailVerification(user);
+      }
+
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -116,6 +153,7 @@ export default function RegisterPage() {
           uid: user.uid,
           password: password,
           role: "client",
+          emailVerified: false,
         }),
       });
 
@@ -126,7 +164,7 @@ export default function RegisterPage() {
         return;
       }
 
-      // ✅ FIX ADDED HERE
+      // FIX ADDED
       const finalEmail =
         email?.trim() !== "" ? email : `${phone}@cake-heaven.local`;
 
@@ -180,19 +218,21 @@ export default function RegisterPage() {
           uid: user.uid,
           password: "",
           role: "client",
+          emailVerified: true,
         }),
       });
 
-      const userData = {
-        uid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        phone: "",
-        image: user.photoURL,
-        role: "client",
-      };
-
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          phone: "",
+          image: user.photoURL,
+          role: "client",
+        }),
+      );
       window.dispatchEvent(new Event("storage"));
 
       await fetch("/api/send-email", {
@@ -201,7 +241,7 @@ export default function RegisterPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: finalEmail,
+          email: user.email,
         }),
       });
 
@@ -242,13 +282,16 @@ export default function RegisterPage() {
 
           <form onSubmit={handleRegister} className="space-y-4">
             <Input
+              type="text"
               placeholder="Full Name"
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
 
             <Input
               type="email"
               placeholder="Email (optional)"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
@@ -287,6 +330,7 @@ export default function RegisterPage() {
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <span
@@ -301,6 +345,7 @@ export default function RegisterPage() {
               <Input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm Password"
+                value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
               <span

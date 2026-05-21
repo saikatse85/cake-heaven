@@ -4,22 +4,18 @@ import clientPromise from "@/lib/mongodb";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { name, email, phone, password, image, address, uid, mode } = body;
+    const { name, email, phone, password, image, address, uid, mode,emailVerified, } = body;
 
     const client = await clientPromise;
     const db = client.db("cake-heaven");
     const users = db.collection("users");
 
     // =========================
-    // 🔐 REGISTER MODE
+    //REGISTER MODE
     // =========================
     if (mode === "register") {
-      const existingUser = await users.findOne({
-        $or: [
-          email ? { email } : null,
-          phone ? { phone } : null,
-        ].filter(Boolean),
-      });
+      const query = email ? { email } : { phone };
+      const existingUser = await users.findOne(query);
 
       if (existingUser) {
         return Response.json(
@@ -35,9 +31,9 @@ export async function POST(req) {
         image: image || "",
         address: address || "",
         uid: uid || null,
-        password: password || "",
         role: "client",
         createdAt: new Date(),
+        emailVerified: emailVerified || false,
       };
 
       const result = await users.insertOne(newUser);
@@ -51,25 +47,13 @@ export async function POST(req) {
     }
 
 if (mode === "login") {
-  const user = await users.findOne({
-    $or: [
-      email ? { email } : null,
-      phone ? { phone } : null,
-    ].filter(Boolean),
-  });
+  const query = email ? { email } : { phone };
+  const user = await users.findOne(query);
 
   if (!user) {
     return Response.json(
       { success: false, message: "User not found" },
       { status: 404 }
-    );
-  }
-
-  // ✅ password check (ONLY HERE)
-  if (user.password !== password) {
-    return Response.json(
-      { success: false, message: "Invalid password" },
-      { status: 401 }
     );
   }
 
