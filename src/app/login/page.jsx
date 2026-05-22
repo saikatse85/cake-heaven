@@ -51,9 +51,10 @@ export default function LoginPage() {
       }
 
       // =========================
-      // 2. MONGO LOGIN
+      // 2. LOGIN / FETCH PROFILE
       // =========================
       const isEmail = identifier.includes("@");
+      const cleanPhone = !isEmail ? identifier.replace(/\D/g, "") : "";
 
       const res = await fetch("/api/users", {
         method: "POST",
@@ -62,51 +63,72 @@ export default function LoginPage() {
         },
         body: JSON.stringify({
           mode: "login",
-          email: isEmail ? identifier : "",
-          phone: !isEmail ? identifier : "",
-          password,
+          email: isEmail ? identifier.trim() : "",
+          phone: cleanPhone,
+          password: password,
         }),
       });
 
       const data = await res.json();
 
-      if (!res.ok || !data.success || !data.user) {
+      if (!res.ok) {
         setError(data.message || "Invalid credentials");
         setLoading(false);
         return;
       }
 
-      const mongoUser = data.user;
-
-      // =========================
-      // 3. FIREBASE LOGIN
-      // =========================
+      let mongoUser = null;
       let firebaseUser = null;
 
-      try {
-        const { signInWithEmailAndPassword } = await import("firebase/auth");
+      // =========================
+      // 3. FIREBASE LOGIN IF NEEDED
+      // =========================
+      if (data.isFirebase) {
+        try {
+          const { signInWithEmailAndPassword } = await import("firebase/auth");
+          const userCredential = await signInWithEmailAndPassword(
+            auth,
+            data.email,
+            password,
+          );
+          firebaseUser = userCredential.user;
 
-        let loginId = mongoUser.email;
-
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          loginId,
-          password,
-        );
-
-        firebaseUser = userCredential.user;
-      } catch (firebaseErr) {
-        console.log("Firebase login failed:", firebaseErr.message);
-
-        // ❌ If Firebase fails for phone → DON'T break login
-        // MongoDB already verified
+          // Fetch profile after successful Firebase login
+          const profileRes = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              mode: "get_profile",
+              email: data.email,
+            }),
+          });
+          const profileData = await profileRes.json();
+          if (profileRes.ok && profileData.user) {
+            mongoUser = profileData.user;
+          } else {
+            throw new Error("Profile fetch failed");
+          }
+        } catch (firebaseErr) {
+          console.log("Firebase login failed:", firebaseErr.message);
+          setError(`Login Error: ${firebaseErr.message}`);
+          setLoading(false);
+          return;
+        }
+      } else {
+        // Phone-only mongo user
+        mongoUser = data.user;
       }
 
       // =========================
       // 4. MERGE USER
       // =========================
       const userData = {
-        uid: mongoUser.uid || firebaseUser?.uid,
+        uid:
+          mongoUser.uid ||
+          firebaseUser?.uid ||
+          `local-${mongoUser._id || Date.now()}`,
         name: mongoUser.name || firebaseUser?.displayName,
         email: mongoUser.email,
         phone: mongoUser.phone,

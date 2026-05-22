@@ -22,32 +22,87 @@ export default function ForgotPasswordPage() {
     setError("");
 
     if (!email) {
-      return setError("Email is required");
+      return setError("Email or Phone is required");
     }
 
-    if (!isValidEmail(email)) {
+    const isEmail = email.includes("@");
+
+    if (isEmail && !isValidEmail(email)) {
       return setError("Please enter a valid email address");
     }
 
     try {
       setLoading(true);
 
-      //Firebase password reset
-      await sendPasswordResetEmail(auth, email);
+      if (isEmail) {
+        // Firebase password reset for email users
+        await sendPasswordResetEmail(auth, email);
+        
+        Swal.fire({
+          icon: "success",
+          title: "Reset Email Sent",
+          text: "Check your email inbox 📩",
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      } else {
+        // MongoDB password reset for phone-only users
+        // Note: Without SMS OTP, this directly resets the password for demonstration.
+        // The user must provide a new password in the prompt.
+        const { value: newPassword } = await Swal.fire({
+          title: "Reset Password",
+          input: "password",
+          inputLabel: "Enter your new password",
+          inputPlaceholder: "New password",
+          inputAttributes: {
+            maxlength: "30",
+            autocapitalize: "off",
+            autocorrect: "off"
+          },
+          showCancelButton: true,
+          inputValidator: (value) => {
+            if (!value) {
+              return "You need to write something!";
+            }
+            if (value.length < 6) {
+              return "Password must be at least 6 characters";
+            }
+          }
+        });
 
-      Swal.fire({
-        icon: "success",
-        title: "Reset Email Sent",
-        text: "Check your email inbox 📩",
-        timer: 2500,
-        showConfirmButton: false,
-      });
+        if (newPassword) {
+          const res = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              mode: "reset_password",
+              phone: email.replace(/\D/g, ""), // email variable actually holds phone here
+              password: newPassword,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.message || "Failed to reset password");
+          }
+
+          Swal.fire({
+            icon: "success",
+            title: "Password Reset",
+            text: "Your password has been updated successfully 🎉",
+            timer: 2500,
+            showConfirmButton: false,
+          });
+        }
+      }
 
       setEmail("");
     } catch (err) {
       console.log(err);
-
-      let message = "Failed to send reset email";
+      let message = err.message || "Failed to send reset email";
 
       if (err.code === "auth/user-not-found") {
         message = "No user found with this email";

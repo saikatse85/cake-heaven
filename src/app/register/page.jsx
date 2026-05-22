@@ -118,26 +118,28 @@ export default function RegisterPage() {
         imageUrl = await uploadImageToCloudinary(image);
       }
 
-      const loginEmail =
-        email?.trim() !== "" ? email : `${phone}@cake-heaven.local`;
-
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        loginEmail,
-        password,
-      );
-
-      const user = userCredential.user;
-
-      await updateProfile(user, {
-        displayName: name,
-        photoURL: imageUrl,
-      });
+      let finalUid = null;
 
       if (email.trim() !== "") {
+        // Firebase flow for email users
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email.trim(),
+          password,
+        );
+
+        const user = userCredential.user;
+        finalUid = user.uid;
+
+        await updateProfile(user, {
+          displayName: name,
+          photoURL: imageUrl,
+        });
+
         await sendEmailVerification(user);
       }
 
+      // MongoDB save (will hash password if email is empty)
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -145,15 +147,14 @@ export default function RegisterPage() {
         },
         body: JSON.stringify({
           mode: "register",
-          name: name || user.displayName || "",
-          email: loginEmail,
+          name: name,
+          email: email.trim(),
           phone: phone,
-          image: imageUrl || user.photoURL || "",
+          image: imageUrl,
           address: address,
-          uid: user.uid,
-          password: password,
+          uid: finalUid,
+          password: password, // Only used by backend if email is empty
           role: "client",
-          emailVerified: false,
         }),
       });
 
@@ -164,16 +165,12 @@ export default function RegisterPage() {
         return;
       }
 
-      // FIX ADDED
-      const finalEmail =
-        email?.trim() !== "" ? email : `${phone}@cake-heaven.local`;
-
       const userData = {
-        uid: user.uid,
-        name: name || user.displayName,
-        email: finalEmail,
+        uid: finalUid || data.insertedId,
+        name: name,
+        email: email.trim(),
         phone: phone,
-        image: imageUrl || user.photoURL,
+        image: imageUrl,
         role: "client",
       };
 
@@ -216,9 +213,7 @@ export default function RegisterPage() {
           image: user.photoURL || "",
           address: address,
           uid: user.uid,
-          password: "",
           role: "client",
-          emailVerified: true,
         }),
       });
 
