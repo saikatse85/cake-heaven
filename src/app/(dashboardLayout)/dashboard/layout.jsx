@@ -17,30 +17,40 @@ export default function DashboardLayout({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        router.push("/login");
-        return;
+      let activeRole = null;
+      let identifier = null;
+
+      if (user) {
+        identifier = user.uid;
+      } else {
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) {
+          router.push("/login");
+          return;
+        }
+
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          identifier = parsedUser.uid || parsedUser.email || parsedUser.phone;
+          activeRole = parsedUser.role?.toLowerCase();
+        } catch (parseError) {
+          console.log("Stored user parse error:", parseError);
+          router.push("/login");
+          return;
+        }
       }
 
       try {
-        const res = await fetch(`/api/users/${user.uid}`);
-
+        const res = await fetch(`/api/users/${identifier}`);
         const data = await res.json();
-        const roleFromDB = data?.role?.toLowerCase();
-
-        // if role missing, don't logout
-        if (!roleFromDB) {
-          setUserRole("user");
-          setLoading(false);
-          return;
-        }
+        const roleFromDB =
+          data?.user?.role?.toLowerCase() || activeRole || "user";
 
         setUserRole(roleFromDB);
         setLoading(false);
 
         const path = window.location.pathname;
 
-        // redirect
         if (path === "/dashboard") {
           if (roleFromDB === "admin") {
             router.replace("/dashboard/admin");
@@ -49,14 +59,13 @@ export default function DashboardLayout({ children }) {
           }
         }
 
-        // protect admin
         if (roleFromDB !== "admin" && path.startsWith("/dashboard/admin")) {
           router.replace("/dashboard/user");
         }
       } catch (error) {
         console.log("Role fetch error:", error);
 
-        setUserRole("user");
+        setUserRole(activeRole || "user");
         setLoading(false);
       }
     });

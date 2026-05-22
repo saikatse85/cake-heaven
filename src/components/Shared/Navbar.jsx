@@ -54,10 +54,12 @@ export default function Navbar() {
         const data = await res.json();
 
         // SAFE CHECK
-        if (res.ok && data && !data.success) {
-          setDbUser(data);
-          setRole(data.role || "client");
+        if (res.ok && data?.success) {
+          setDbUser(data.user || data);
+          setRole(data.user?.role || data.role || "client");
           setUser(currentUser);
+
+          localStorage.setItem("user", JSON.stringify(data.user || data));
         } else {
           // fallback to localStorage
           const stored = localStorage.getItem("user");
@@ -108,7 +110,7 @@ export default function Navbar() {
   };
 
   const userImage = dbUser?.image || user?.photoURL || null;
-  const userName = dbUser?.name || user?.displayName || "User";
+  const userName = dbUser?.name || user?.displayName || user?.phone || "User";
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-950 text-black dark:text-white shadow-md border-b border-zinc-200 dark:border-zinc-800">
@@ -261,7 +263,9 @@ export default function Navbar() {
 
                   <div>
                     <p>{userName}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-xs text-gray-500">
+                      {user?.email || user?.phone}
+                    </p>
                     <p className="text-xs text-pink-600">Role: {role}</p>
                   </div>
                 </DropdownMenuLabel>
